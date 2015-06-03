@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<link href="style.css" rel="stylesheet" type="text/css" />
+
+		<script src="js/three.min.js"></script>
+
+		<script src="js/GLOBAL.js"></script>
+		<script src="js/GLOBAL/COLOR.js"></script>
+		<script src="js/GLOBAL/CONTEXT_MENU.js"></script>
+		<script src="js/GLOBAL/NAVIGATION.js"></script>
+		<script src="js/GLOBAL/VIEWPORT.js"></script>
+
+	<!--
+		<script src="js/.js"></script>
+	-->
+
+	</head>
+	<body onload="Main()">
+		<script type="text/javascript">
+			var onWindowResize;
+
+			function Main()
+			{
+				var G = new GLOBAL();
+				// So I want to set up the UI
+				// There will be a top navigation, a left-side context menu, and a right-side viewport
+				//
+
+				// Set up nav bar
+				var navigation = document.createElement("div");
+					navigation.id = "_NAVIGATION";
+					navigation.style.background = G.STD.COLOR.BACKGROUND.GREEN.toString();
+					navigation.style.width = G.WIDTH;
+					navigation.style.height = 75;
+					navigation.style.position = "absolute";
+					navigation.style.left = 0;
+					navigation.style.top = 0;
+				document.body.appendChild(navigation);
+				G.setNavigation(navigation);
+
+				// Set up context menu
+				var contextMenu = document.createElement("div");
+					contextMenu.id = "_CONTEXT_MENU";
+					contextMenu.style.background = G.STD.COLOR.BACKGROUND.BLUE.toString();
+					contextMenu.style.width = 200;
+					contextMenu.style.height = G.HEIGHT - navigation.offsetHeight;
+					contextMenu.style.position = "absolute";
+					contextMenu.style.left = 0;
+					contextMenu.style.top = navigation.offsetHeight;
+				document.body.appendChild(contextMenu);
+				G.setContextMenu(contextMenu);
+
+				// Set up viewport
+				var viewport = document.createElement("div");
+					viewport.id = "_VIEWPORT";
+					viewport.style.background = G.STD.COLOR.BACKGROUND.PINK.toString();
+					viewport.style.width = G.WIDTH - contextMenu.offsetWidth;
+					viewport.style.height = G.HEIGHT - navigation.offsetHeight;
+					viewport.style.position = "absolute";
+					viewport.style.left = contextMenu.offsetWidth;
+					viewport.style.top = navigation.offsetHeight;
+				document.body.appendChild(viewport);
+				G.setViewport(viewport);
+
+				onWindowResize = function(event)
+				{
+					G.windowResize(event);
+				}
+
+				// Do more stuff
+
+				G.VIEWPORT.init();
+				var updateInterval = setInterval(function(){G.VIEWPORT.animate();}, 25);
+			}
+		</script>
+	</body>
+</html>
