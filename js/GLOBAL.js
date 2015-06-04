@@ -103,6 +103,11 @@ function GLOBAL()
             viewport.style.left = contextMenu.offsetWidth;
             viewport.style.top = navigation.offsetHeight;
         this.setViewport(viewport);
+
+        // Now that the UI is in place and functions well,
+        // I want to set up a Grid in the Viewport.
+        this.GRID = new GRID();
+
     }
 
     this.setNavigation = function(element)
@@ -145,6 +150,153 @@ function GLOBAL()
         this.VIEWPORT.resize(this.STD.VIEWPORT.WIDTH(), this.STD.VIEWPORT.HEIGHT());
         this.CONTEXT_MENU.resize(this.STD.CONTEXT_MENU.WIDTH(), this.STD.CONTEXT_MENU.HEIGHT());
         this.NAVIGATION.resize(this.STD.NAVIGATION.WIDTH(), this.STD.NAVIGATION.HEIGHT());
+    }
+
+    this.shiftFlag = false;
+    this.altFlag = false;
+    this.ctrlFlag = false;
+
+    this.keys = []; // INTs for all keys down
+
+    this.keyEvent = function(event)
+    {
+        // Check for special keys
+        if(event.shiftKey || event.altKey || event.ctrlKey)
+        {
+            if(!this.shiftFlag && event.shiftKey)
+            {
+                this.shiftFlag = true;
+                this.keys[this.keys.length] = "SHIFT";
+            }
+            else if(this.shiftFlag && !event.shiftKey)
+            {
+                this.shiftFlag = false;
+                for(var i = 0; i < this.keys.length; i++)
+                {
+                    this.shiftFlag = false;
+                    if(this.keys[i] == "SHIFT")
+                    {
+                        this.keys.splice(i, 1);
+                    }
+                }
+            }
+
+            if(!this.altFlag && event.altKey)
+            {
+                this.altFlag = true;
+                this.keys[this.keys.length] = "ALT";
+            }
+            else if(this.altFlag && !event.altKey)
+            {
+                this.altFlag = false;
+                for(var i = 0; i < this.keys.length; i++)
+                {
+                    if(this.keys[i] == "ALT")
+                    {
+                        this.keys.splice(i, 1);
+                    }
+                }
+            }
+
+            if(!this.ctrlFlag && event.ctrlKey)
+            {
+                this.ctrlFlag = true;
+                this.keys[this.keys.length] = "CTRL";
+            }
+            else if(this.ctrlFlag && !event.ctrlKey)
+            {
+                this.ctrlFlag = false;
+                for(var i = 0; i < this.keys.length; i++)
+                {
+                    if(this.keys[i] == "CTRL")
+                    {
+                        this.keys.splice(i, 1);
+                    }
+                }
+            }
+        }
+        else // No special keys were pressed, process normally
+        {
+            var key = event.which || event.keyCode;
+            var index = this.keys.indexOf(key)
+            if(index == -1)
+            {
+                this.keys[this.keys.length] = key;
+            }
+            else
+            {
+                this.keys.splice(index, 1);
+            }
+        }
+
+        this.keyProcess()
+    }
+
+    this.keyCombos =
+    [
+        {
+            name:"copy",
+            keys:["CTRL", "c"],
+            sensitive:false,
+            func:function()
+            {
+                console.log("COPIED");
+            }
+        },
+        {
+            name:"paste",
+            keys:["CTRL", "v"],
+            sensitive:false,
+            func:function()
+            {
+                console.log("PASTED");
+            }
+        }
+    ]
+
+    this.keyProcess = function()
+    {
+        for(var i = 0; i < this.keyCombos.length; i++)
+        {
+            var keysThatNeedToBePressed = [];
+            for(var j = 0; j < this.keyCombos[i].keys.length; j++)
+            {
+                keysThatNeedToBePressed[keysThatNeedToBePressed.length] = this.keyCombos[i].keys[j];
+            }
+            for(var k = 0; k < this.keyCombos[i].keys.length; k++)
+            {
+                console.log(this.keyCombos[i].name + ": " + this.keyCombos[i].keys[k]);
+                switch(this.keyCombos[i].keys[k])
+                {
+                    case 16: // SHIFT
+                        if(!shiftFlag)
+                        {
+                            // NO GOOD
+                        }
+                        break;
+                    case 18: // ALT
+                        if(!altFlag)
+                        {
+                            // NO GOOD
+                        }
+                        break;
+                    case 17: // CTRL
+                        if(!ctrlFlag)
+                        {
+                            // NO GOOD
+                        }
+                        break;
+                }
+                if(this.keys.indexOf(this.keyCombos[i].keys[k]) == -1)
+                {
+                    continue;
+                }
+
+                // Successful combo
+
+                // ...
+            }
+        }
     }
 
     this.init();
