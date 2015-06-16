@@ -9,21 +9,28 @@
 		<script src="js/GLOBAL/CONTEXT_MENU.js"></script>
 		<script src="js/GLOBAL/NAVIGATION.js"></script>
 		<script src="js/GLOBAL/VIEWPORT.js"></script>
-		<script src="js/GLOBAL/GRID.js"></script>
+		<script src="js/GRID.js"></script>
+		<script src="js/GEO_CONTROL.js"></script>
 	</head>
 	<body onload="Main()">
 		<script type="text/javascript">
-			var onWindowResize;
-
 			function Main()
 			{
-				var G = new GLOBAL();
+				var GEO_CONTROL = new GEO_CONTROL();
+				var GLOBAL = new GLOBAL();
+				var GRID = new GRID();
 
-				onWindowResize = function(event)
+				window.onresize = function()
 				{
-					G.windowResize(event);
-				}
+					G.windowResize();
+				};
+
 				window.onkeydown = function(event)
+				{
+					G.keyEvent(event)
+				};
+
+				window.onkeyup = function(event)
 				{
 					G.keyEvent(event)
 				};
@@ -33,7 +40,6 @@
 				G.VIEWPORT.init();
 				var updateInterval = setInterval(function(){G.VIEWPORT.animate();}, 25);
 			}
-
 
 		</script>
 	</body>

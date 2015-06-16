@@ -1,8 +1,10 @@
 function GLOBAL()
 {
+    // Keep track of window size; update in this.windowResize()
     this.WIDTH = window.innerWidth;
     this.HEIGHT = window.innerHeight;
 
+    // For easy color reference GLOBAL/this.<color>
     this.WHITE = new COLOR(0xff, 0xff, 0xff);
     this.LIGHT_GREY = new COLOR(0xc3, 0xc3, 0xc3);
     this.DARK_GREY = new COLOR(0x3c, 0x3c, 0x3c);
@@ -12,6 +14,7 @@ function GLOBAL()
     this.PINK = new COLOR(0xeb, 0x65, 0xa0);
     this.BLUE = new COLOR(0x73, 0xc5, 0xe1);
 
+    // These act as my constants
     this.STD =
     {
         COLOR:
@@ -43,6 +46,9 @@ function GLOBAL()
         },
         SIZE:
         {
+            // true values are 100%
+            // so it should be calculated
+            // in the function that needs dimensions
             NAVIGATION:
             {
                 width:true,
@@ -64,12 +70,42 @@ function GLOBAL()
     this.NAVIGATION = new NAVIGATION();
     this.CONTEXT_MENU = new CONTEXT_MENU();
     this.VIEWPORT = new VIEWPORT();
+    this.VIEWPORT.setGlobal(this);
+
+    this.GRID = {};
+    this.GEO_CONTROL = {};
+    this.GEO_CONTROL.setGlobal(this);
+
+    this.setGrid = function(g)
+    {
+        this.GRID = g;
+        this.GRID.setGlobal(this);
+        if(this.GEO_CONTROL())
+        {
+            this.GRID.setGEO_CONTROL()
+        }
+    }
+
+    this.getGrid = function()
+    {
+        return this.GRID;
+    }
+
+    this.setGeoControl = function(GEO_CONTROL)
+    {
+        this.VIEWPORT.setGeoControl(GEO_CONTROL);
+        this.GEO_CONTROL = GEO_CONTROL;
+    }
+
+    this.getGeoControl = function()
+    {
+        return this.GEO_CONTROL;
+    }
 
     this.init = function()
     {
         // So I want to set up the UI
         // There will be a top navigation, a left-side context menu, and a right-side viewport
-        //
 
         // Set up nav bar
         var navigation = document.createElement("div");
@@ -104,10 +140,6 @@ function GLOBAL()
             viewport.style.top = navigation.offsetHeight;
         this.setViewport(viewport);
 
-        // Now that the UI is in place and functions well,
-        // I want to set up a Grid in the Viewport.
-        this.GRID = new GRID();
-
     }
 
     this.setNavigation = function(element)
@@ -126,6 +158,11 @@ function GLOBAL()
     {
         this.VIEWPORT.element = element;
         document.body.appendChild(this.VIEWPORT.element);
+    }
+
+    this.getViewport = function()
+    {
+        return this.VIEWPORT;
     }
 
     this.windowResize = function(event)
@@ -147,9 +184,10 @@ function GLOBAL()
         this.WIDTH = window.innerWidth;
         this.HEIGHT = window.innerHeight;
 
-        this.VIEWPORT.resize(this.STD.VIEWPORT.WIDTH(), this.STD.VIEWPORT.HEIGHT());
-        this.CONTEXT_MENU.resize(this.STD.CONTEXT_MENU.WIDTH(), this.STD.CONTEXT_MENU.HEIGHT());
-        this.NAVIGATION.resize(this.STD.NAVIGATION.WIDTH(), this.STD.NAVIGATION.HEIGHT());
+
+        this.NAVIGATION.resize(this.WIDTH, 75);
+        this.CONTEXT_MENU.resize(200, this.HEIGHT - parseInt(this.NAVIGATION.element.offsetHeight, 10));
+        this.VIEWPORT.resize(this.WIDTH - parseInt(this.CONTEXT_MENU.element.offsetWidth, 10), this.HEIGHT - parseInt(this.NAVIGATION.element.offsetHeight, 10));
     }
 
     this.shiftFlag = false;
@@ -219,11 +257,11 @@ function GLOBAL()
         {
             var key = event.which || event.keyCode;
             var index = this.keys.indexOf(key)
-            if(index == -1)
+            if(index == -1 && event.type == "keydown")
             {
                 this.keys[this.keys.length] = key;
             }
-            else
+            else if(event.type == "keyup")
             {
                 this.keys.splice(index, 1);
             }
@@ -263,33 +301,54 @@ function GLOBAL()
             {
                 keysThatNeedToBePressed[keysThatNeedToBePressed.length] = this.keyCombos[i].keys[j];
             }
+            var str = "";
+            for(var o = 0; o < this.keys.length; o++)
+            {
+                if(this.keys[o] == "SHIFT")
+                    str += "SHIFT";
+                else if(this.keys[o] == "ALT")
+                    str += "ALT";
+                else if(this.keys[o] == "CTRL")
+                    str += "CTRL";
+                else
+                    str += String.fromCharCode(this.keys[o]);
+            }
+            console.log(str);
             for(var k = 0; k < this.keyCombos[i].keys.length; k++)
             {
-                console.log(this.keyCombos[i].name + ": " + this.keyCombos[i].keys[k]);
                 switch(this.keyCombos[i].keys[k])
                 {
-                    case 16: // SHIFT
+                    case "SHIFT":
                         if(!shiftFlag)
                         {
-                            // NO GOOD
+                            break;
                         }
-                        break;
-                    case 18: // ALT
+                        else // Shift is down
+                        {
+                            continue;
+                        }
+                    case "ALT":
                         if(!altFlag)
                         {
-                            // NO GOOD
+                            break;
                         }
-                        break;
-                    case 17: // CTRL
+                        else // Alt is down
+                        {
+                            continue;
+                        }
+                    case "17":
                         if(!ctrlFlag)
                         {
-                            // NO GOOD
+                            break;
                         }
-                        break;
+                        else // Ctrl is down
+                        {
+                            continue;
+                        }
                 }
                 if(this.keys.indexOf(this.keyCombos[i].keys[k]) == -1)
                 {
-                    continue;
+                    break;
                 }
 
                 // Successful combo
@@ -297,6 +356,11 @@ function GLOBAL()
                 // ...
             }
         }
+    }
+
+    this.display = function(geometry)
+    {
+        this.VIEWPORT.addToScene(geometry);
     }
 
     this.init();
