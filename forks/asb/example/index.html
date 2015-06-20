@@ -9,6 +9,7 @@
 		<script src="js/GLOBAL/CONTEXT_MENU.js"></script>
 		<script src="js/GLOBAL/NAVIGATION.js"></script>
 		<script src="js/GLOBAL/VIEWPORT.js"></script>
+		<script src="js/GLOBAL/MOUSE_DIRECTION.js"></script>
 		<script src="js/GRID.js"></script>
 		<script src="js/GEO_CONTROL.js"></script>
 		<script src="js/KEY_LISTENER.js"></script>
@@ -31,7 +32,7 @@
 
 				G.VIEWPORT.init();
 				G.VIEWPORT.test();
-				var grid = new GRID(G, GC, 100, 50);
+				var grid = new GRID(G, GC, 1200, 12);
 
 				var camInterval = setInterval(function(){G.VIEWPORT.animateCamera(G.VIEWPORT.GRID);}, 100)
 				var updateInterval = setInterval(function(){G.VIEWPORT.render();}, 25);
@@ -39,7 +40,17 @@
 
 			window.onmousemove = function(event)
 			{
-				// Do things on mouse over
+				G.mousemove(event);
+			}
+
+			window.onmousedown = function(event)
+			{
+				G.mousedown(event);
+			}
+
+			window.onmouseup = function(event)
+			{
+				G.mouseup(event);
 			}
 		</script>
 	</body>

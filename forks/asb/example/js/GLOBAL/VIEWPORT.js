@@ -84,7 +84,11 @@ function VIEWPORT(ele)
     }
 
 
-    this.camRadius = 100;
+    this.camMouseOldPosition = {x:undefined,y:undefined};
+    this.camDragFlag = false;
+    this.camOffset = 100;
+    this.camOffsetIncrement = 10;
+    this.camRadius = 250;
     this.camConstant = 0.1;
     this.addToScene = function(obj)
     {
@@ -106,10 +110,42 @@ function VIEWPORT(ele)
 
 VIEWPORT.prototype.animateCamera = function(obj)
 {
-this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camConstant * this.GLOBAL.TIMER.elapsed() / 1000);
-this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camConstant * this.GLOBAL.TIMER.elapsed() / 1000);
-this.camera.position.y = obj.position.y + 100;
-this.camera.lookAt(obj.position);
+    this.camOldPosition = this.camera.position;
+    this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camConstant * this.GLOBAL.TIMER.elapsed() / 1000);
+    this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camConstant * this.GLOBAL.TIMER.elapsed() / 1000);
+    this.camera.position.y = obj.position.y + this.camOffset;
+    this.camera.lookAt(obj.position);
+}
+
+VIEWPORT.prototype.camIsDragging = function()
+{
+    return this.camDragFlag;
+}
+
+VIEWPORT.prototype.camDragStart = function()
+{
+    console.log("~! VIEWPORT: CAM DRAG start");
+    this.camDragFlag = true;
+}
+
+VIEWPORT.prototype.camDragStop = function()
+{
+    console.log("~! VIEWPORT: CAM DRAG stop");
+    this.camDragFlag = false;
+}
+
+VIEWPORT.prototype.camDrag = function(direction)
+{
+    if(this.camDragFlag)
+        switch(direction)
+        {
+            case this.GLOBAL.STD.DIRECTION.UP:
+                this.camOffset += this.camOffsetIncrement;
+                break;
+            case this.GLOBAL.STD.DIRECTION.DOWN:
+                this.camOffset -= this.camOffsetIncrement;
+                break;
+        }
 }
 
 VIEWPORT.prototype.animateTest = function()

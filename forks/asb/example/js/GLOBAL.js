@@ -64,6 +64,17 @@ function GLOBAL()
                 width:true,
                 height:true
             }
+        },
+        DIRECTION:
+        {
+            UP:new MOUSE_DIRECTION("UP", -1),
+            DOWN:new MOUSE_DIRECTION("DOWN", 1),
+            LEFT:new MOUSE_DIRECTION("LEFT", -2),
+            RIGHT:new MOUSE_DIRECTION("RIGHT", 2)
+        },
+        TICK:
+        {
+            MILLISECONDS:10
         }
     }
 
@@ -216,6 +227,86 @@ function GLOBAL()
         this.NAVIGATION.resize(this.WIDTH, 75);
         this.CONTEXT_MENU.resize(200, this.HEIGHT - parseInt(this.NAVIGATION.element.offsetHeight, 10));
         this.VIEWPORT.resize(this.WIDTH - parseInt(this.CONTEXT_MENU.element.offsetWidth, 10), this.HEIGHT - parseInt(this.NAVIGATION.element.offsetHeight, 10));
+    }
+
+    this.getMousePosition = function(event)
+    {
+        var mouse2d =
+        {
+            x:((parseInt(event.clientX, 10) - parseInt(this.CONTEXT_MENU.element.offsetWidth, 10)) / (parseInt(this.VIEWPORT.element.offsetWidth, 10))),
+            y:((parseInt(event.clientY, 10) - parseInt(this.NAVIGATION.element.offsetHeight, 10)) / (parseInt(this.VIEWPORT.element.offsetHeight, 10)))
+        };
+        return mouse2d;
+    }
+
+    this.mouseOnViewport = function(event)
+    {
+        return (this.mousePositionFresh.x >= 0 && this.mousePositionFresh.x <= 1 && this.mousePositionFresh.y >= 0 && this.mousePositionFresh.y <= 1)
+    }
+
+    this.mousePositionOld = {x:undefined,y:undefined};
+    this.mousePositionFresh = {x:undefined,y:undefined};
+    this.mouseDirectionOld = undefined;
+    this.mouseDirectionFresh = undefined;
+    this.mouseDragFlag = false;
+    this.mousemove = function(event)
+    {
+        if(this.mouseDragFlag)
+        {
+            //console.log("~! MOUSE: DRAGGING");
+        }
+        if(this.VIEWPORT.camIsDragging())
+        {
+            this.mousePositionOld = this.mousePositionFresh;
+            this.mousePositionFresh = this.getMousePosition(event);
+            var horizFlag = false;
+            var xDiff = this.mousePositionFresh.x - this.mousePositionOld.x;
+            var yDiff = this.mousePositionFresh.y - this.mousePositionOld.y;
+            if(this.mousePositionOld != undefined)
+            {
+                if(Math.abs(xDiff) > Math.abs(yDiff))
+                {
+                    horizFlag = true;
+                    //console.log("~! MOUSE: horizontal")
+                }
+                else
+                {
+                    //console.log("~! MOUSE: vertical")
+                    if(yDiff > 0)
+                    {
+                        this.mouseDirectionFresh = this.STD.DIRECTION.UP;
+                    }
+                    else if(yDiff != 0)
+                    {
+                        this.mouseDirectionFresh = this.STD.DIRECTION.DOWN;
+                    }
+                    this.VIEWPORT.camDrag(this.mouseDirectionFresh);
+                }
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+    this.mousedown = function(event)
+    {
+        this.mousePositionFresh = this.getMousePosition(event);
+        console.log("~! GLOBAL: MOUSE is down");
+        this.mouseDragFlag = true;
+        if(this.mouseOnViewport)
+        {
+            // Clicked in VIEWPORT
+            this.VIEWPORT.camDragStart()
+        }
+    }
+
+    this.mouseup = function(event)
+    {
+        console.log("~! GLOBAL: MOUSE is up");
+        this.mouseDragFlag = false;
+        this.VIEWPORT.camDragStop();
     }
 
     this.shiftFlag = false;
