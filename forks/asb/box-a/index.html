@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<link href="style.css" rel="stylesheet" type="text/css" />
+
+		<script src="js/three.min.js"></script>
+
+		<script src="js/GLOBAL.js"></script>
+		<script src="js/GLOBAL/COLOR.js"></script>
+		<script src="js/GLOBAL/CONTEXT_MENU.js"></script>
+		<script src="js/GLOBAL/NAVIGATION.js"></script>
+		<script src="js/GLOBAL/VIEWPORT.js"></script>
+		<script src="js/GRID.js"></script>
+		<script src="js/GEO_CONTROL.js"></script>
+	</head>
+	<body onload="Main()">
+		<script type="text/javascript">
+			function Main()
+			{
+				var GEO_CONTROL = new GEO_CONTROL();
+				var GLOBAL = new GLOBAL();
+				var GRID = new GRID();
+
+				window.onresize = function()
+				{
+					G.windowResize();
+				};
+
+				window.onkeydown = function(event)
+				{
+					G.keyEvent(event)
+				};
+
+				window.onkeyup = function(event)
+				{
+					G.keyEvent(event)
+				};
+
+				// Do more stuff
+
+				G.VIEWPORT.init();
+				var updateInterval = setInterval(function(){G.VIEWPORT.animate();}, 25);
+			}
+
+		</script>
+	</body>
+</html>

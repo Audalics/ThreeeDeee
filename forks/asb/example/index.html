@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<link href="style.css" rel="stylesheet" type="text/css" />
+
+		<script src="js/three.min.js"></script>
+
+		<script src="js/GLOBAL.js"></script>
+		<script src="js/GLOBAL/COLOR.js"></script>
+		<script src="js/GLOBAL/CONTEXT_MENU.js"></script>
+		<script src="js/GLOBAL/NAVIGATION.js"></script>
+		<script src="js/GLOBAL/VIEWPORT.js"></script>
+		<script src="js/GRID.js"></script>
+		<script src="js/GEO_CONTROL.js"></script>
+		<script src="js/KEY_LISTENER.js"></script>
+	</head>
+	<body onload="Main()">
+		<script type="text/javascript">
+			function Main()
+			{
+				window.G = new GLOBAL();
+				var GC = new GEO_CONTROL(G);
+				//var KL = new KEY_LISTENER(G);
+
+
+				window.onresize = function()
+				{
+					G.windowResize();
+				};
+
+				// Do more stuff
+
+				G.VIEWPORT.init();
+				G.VIEWPORT.test();
+				var grid = new GRID(G, GC, 100, 50);
+
+				var camInterval = setInterval(function(){G.VIEWPORT.animateCamera(G.VIEWPORT.GRID);}, 100)
+				var updateInterval = setInterval(function(){G.VIEWPORT.render();}, 25);
+			}
+
+			window.onmousemove = function(event)
+			{
+var raycaster = new THREE.Raycaster();
+				var mouse3D = new THREE.Vector3((event.clientX / parseInt(G.VIEWPORT.element.style.width, 10)) * 2 - 1, -(event.clientY / parseInt(G.VIEWPORT.element.style.width, 10)) * 2 + 1, 0.5);
+				var vector = mouse3D.clone().unproject(G.VIEWPORT.camera);
+				var direction = new THREE.Vector3(0, 0, -1).transformDirection(G.VIEWPORT.camera.matrixWorld);
+				raycaster.set(vector, direction);
+				var gc = G.getGeoControl();
+				var intersects = raycaster.intersectObjects(gc.requestVisible());
+				// Change color if hit block
+				if (intersects.length > 0)
+				{
+					console.log("MOUSED OVER")
+					intersects[ 0 ].object.material.color.setHex( Math.random() * 0xffffff );
+				}
+			}
+		</script>
+	</body>
+</html>
