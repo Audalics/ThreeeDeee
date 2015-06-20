@@ -16,14 +16,15 @@ function GRID(g, gc, size, step)
     this.step = step;
 
     this.object = new THREE.Object3D();
-    this.geometry = new THREE.Geometry();
+    this.geometry = undefined;
 
-    this.material = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2, transparent: true } );
+    this.material = undefined;
 
     this.init = function()
     {
         if(this.GEO_CONTROL != undefined)
         {
+            this.geometry = new THREE.Geometry();
             for (var i = -this.size; i <= this.size; i += this.step) {
                 this.geometry.vertices.push(new THREE.Vector3(-this.size, 0, i));
                 this.geometry.vertices.push(new THREE.Vector3(this.size, 0, i));
@@ -33,6 +34,7 @@ function GRID(g, gc, size, step)
                 this.geometry.vertices.push(new THREE.Vector3(i, 0, -this.size));
                 this.geometry.vertices.push(new THREE.Vector3(i, 0, this.size));
             }
+            this.material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, opacity: 0.25, transparent: true } )
             var line = new THREE.Line(this.geometry, this.material, THREE.LinePieces);
 
             this.object.add(line)
