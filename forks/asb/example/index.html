@@ -23,6 +23,7 @@
 				//var KL = new KEY_LISTENER(G);
 
 
+
 				window.onresize = function()
 				{
 					G.windowResize();
@@ -34,10 +35,14 @@
 				G.VIEWPORT.test();
 				var grid = new GRID(G, GC, 1200, 12);
 
-
 				var camInterval = setInterval(function(){G.VIEWPORT.animateCamera(G.VIEWPORT.GRID);}, 100)
 				var updateInterval = setInterval(function(){G.VIEWPORT.render();}, 25);
 
+			}
+
+			window.oncontextmenu = function()
+			{
+				return false;
 			}
 
 			window.onmousemove = function(event)
@@ -57,7 +62,6 @@
 
 			window.onmousewheel = function(event)
 			{
-				console.log("SCROLLING: " + event.target)
 				G.scroll(event);
 			}
 

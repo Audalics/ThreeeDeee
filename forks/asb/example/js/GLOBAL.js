@@ -42,6 +42,10 @@ function GLOBAL()
                 PURPLE:this.PURPLE,
                 PINK:this.PINK,
                 BLUE:this.BLUE
+            },
+            MOUSE:
+            {
+                OVER:this.PINK
             }
         },
         SIZE:
@@ -239,12 +243,12 @@ function GLOBAL()
         if(this.scrollDiff < 0)
         {
             this.scrollDirection = this.STD.DIRECTION.DOWN;
-            console.log("~! GLOBAL: SCROLL down");
+            //console.log("~! GLOBAL: SCROLL down");
         }
         else if(this.scrollDiff > 0 && this.scrollDiff != 0)
         {
             this.scrollDirection = this.STD.DIRECTION.UP;
-            console.log("~! GLOBAL: SCROLL up");
+            //console.log("~! GLOBAL: SCROLL up");
         }
         else
         {
@@ -261,17 +265,24 @@ function GLOBAL()
     {
         var mouse2d =
         {
-            x:((parseInt(event.clientX, 10) - parseInt(this.CONTEXT_MENU.element.offsetWidth, 10)) / (parseInt(this.VIEWPORT.element.offsetWidth, 10))),
-            y:((parseInt(event.clientY, 10) - parseInt(this.NAVIGATION.element.offsetHeight, 10)) / (parseInt(this.VIEWPORT.element.offsetHeight, 10)))
+            x:2 * ((parseInt(event.clientX, 10) - this.CONTEXT_MENU.getWidth()) / this.VIEWPORT.getWidth()) - 1,
+            y:1 - 2 * ((parseInt(event.clientY, 10) - this.NAVIGATION.getHeight()) / this.VIEWPORT.getHeight())
         };
+        //console.log("~!~!~! MOUSE: pos:" + mouse2d.x + "," + mouse2d.y)
         return mouse2d;
     }
 
     this.mouseOnViewport = function(event)
     {
-        return (this.mousePositionFresh.x >= 0 && this.mousePositionFresh.x <= 1 && this.mousePositionFresh.y >= 0 && this.mousePositionFresh.y <= 1)
+        var xFlag = (this.mousePositionFresh.x >= -1 && this.mousePositionFresh.x <= 1);
+        var yFlag = (this.mousePositionFresh.y >= -1 && this.mousePositionFresh.y <= 1);
+        //console.log(xFlag && yFlag);
+        return xFlag && yFlag;
     }
 
+    this.mouseObject = undefined;
+    this.mouseRaycaster = new THREE.Raycaster();
+    this.mouseIntersects = undefined;
     this.mousePositionOld = {x:undefined,y:undefined};
     this.mousePositionFresh = {x:undefined,y:undefined};
     this.mouseDirectionOld = undefined;
@@ -279,69 +290,87 @@ function GLOBAL()
     this.mouseDragFlag = false;
     this.mousemove = function(event)
     {
+        this.mousePositionOld = this.mousePositionFresh;
+        this.mousePositionFresh = this.getMousePosition(event);
+
         if(this.mouseDragFlag)
         {
-            //console.log("~! MOUSE: DRAGGING");
-        }
-        if(this.VIEWPORT.camIsDragging())
-        {
-            this.mousePositionOld = this.mousePositionFresh;
-            this.mousePositionFresh = this.getMousePosition(event);
-            var horizFlag = false;
-            var xDiff = this.mousePositionFresh.x - this.mousePositionOld.x;
-            var yDiff = this.mousePositionFresh.y - this.mousePositionOld.y;
-            if(this.mousePositionOld != undefined)
+            if(this.VIEWPORT.camIsDragging())
             {
-                if(Math.abs(xDiff) > Math.abs(yDiff))
-                {
-                    horizFlag = true;
-                    //console.log("~! MOUSE: horizontal")
-                    if(xDiff > 0)
-                    {
-                        this.mouseDirectionFresh = this.STD.DIRECTION.RIGHT;
-                    }
-                    else if(xDiff != 0)
-                    {
-                        this.mouseDirectionFresh = this.STD.DIRECTION.LEFT;
-                    }
-                    this.VIEWPORT.camDrag(this.mouseDirectionFresh);
-                }
-                else
-                {
-                    //console.log("~! MOUSE: vertical")
-                    if(yDiff > 0)
-                    {
-                        this.mouseDirectionFresh = this.STD.DIRECTION.UP;
-                    }
-                    else if(yDiff != 0)
-                    {
-                        this.mouseDirectionFresh = this.STD.DIRECTION.DOWN;
-                    }
-                    this.VIEWPORT.camDrag(this.mouseDirectionFresh);
-                }
-            }
-            else
-            {
+                //console.log("~! MOUSE: DRAGGING");
 
+                var horizFlag = false;
+                var xDiff = this.mousePositionFresh.x - this.mousePositionOld.x;
+                var yDiff = this.mousePositionFresh.y - this.mousePositionOld.y;
+                if(this.mousePositionOld != undefined)
+                {
+                    if(Math.abs(xDiff) > Math.abs(yDiff))
+                    {
+                        horizFlag = true;
+                        //console.log("~! MOUSE: horizontal")
+                        if(xDiff > 0)
+                        {
+                            this.mouseDirectionFresh = this.STD.DIRECTION.RIGHT;
+                        }
+                        else if(xDiff != 0)
+                        {
+                            this.mouseDirectionFresh = this.STD.DIRECTION.LEFT;
+                        }
+                        this.VIEWPORT.camDrag(this.mouseDirectionFresh);
+                    }
+                    else
+                    {
+                        //console.log("~! MOUSE: vertical")
+                        if(yDiff > 0)
+                        {
+                            this.mouseDirectionFresh = this.STD.DIRECTION.UP;
+                        }
+                        else if(yDiff != 0)
+                        {
+                            this.mouseDirectionFresh = this.STD.DIRECTION.DOWN;
+                        }
+                        this.VIEWPORT.camDrag(this.mouseDirectionFresh);
+                    }
+                }
             }
+        }
+        else // User is not dragging, do mouseover selection stuff
+        {
+
         }
     }
 
     this.mousedown = function(event)
     {
-        this.mousePositionFresh = this.getMousePosition(event);
-        console.log("~! GLOBAL: MOUSE is down");
-        this.mouseDragFlag = true;
-        if(this.mouseOnViewport)
+        //console.log("Mouse " + event.which)
+        switch(event.which)
         {
-            // Clicked in VIEWPORT
-            this.VIEWPORT.camDragStart()
+            case 1: // Left mouse button
+                event.preventDefault()
+                this.mousePositionFresh = this.getMousePosition(event);
+                //console.log("~! GLOBAL: MOUSE is down");
+                this.mouseDragFlag = true;
+                if(this.mouseOnViewport())
+                {
+                    // Clicked in VIEWPORT
+                    this.VIEWPORT.camDragStart()
+                }
+                break;
+            case 2: // Middle mouse button
+                event.preventDefault()
+                break;
+            case 3: // Right mouse button
+
+                break;
+            default: // Not a mouse button
+                event.preventDefault()
+                break;
         }
     }
 
     this.mouseup = function(event)
     {
-        console.log("~! GLOBAL: MOUSE is up");
+        //console.log("~! GLOBAL: MOUSE is up");
         this.mouseDragFlag = false;
         this.VIEWPORT.camDragStop();
     }
@@ -514,9 +543,9 @@ function GLOBAL()
         }
     }
 
-    this.display = function(geometry)
+    this.display = function(nm, obj, pm)
     {
-        this.VIEWPORT.addToScene(geometry);
+        this.GEO_CONTROL.add(nm, obj, pm);
     }
 
     this.init();

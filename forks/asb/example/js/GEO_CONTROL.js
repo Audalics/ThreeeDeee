@@ -6,7 +6,7 @@ function GEO_CONTROL(GLOBAL)
     this.visible = [];
     this.visibleObjects = [];
     this.hidden = [];
-    this.viewport = GLOBAL.getViewport();
+    this.VIEWPORT = this.GLOBAL.getViewport();
 
     this.idDump = [];
 
@@ -22,7 +22,7 @@ function GEO_CONTROL(GLOBAL)
             };
             this.visibleObjects.push(this.visible[obj.id].object);
             this.idDump.push(obj.id);
-            this.GLOBAL.display(obj);
+            this.VIEWPORT.addToScene(obj);
         }
         else
         {
@@ -66,7 +66,7 @@ function GEO_CONTROL(GLOBAL)
         }
     }
 
-    this.requestVisible = function()
+    this.getVisible = function()
     {
         return this.visibleObjects;
     }
