@@ -229,6 +229,34 @@ function GLOBAL()
         this.VIEWPORT.resize(this.WIDTH - parseInt(this.CONTEXT_MENU.element.offsetWidth, 10), this.HEIGHT - parseInt(this.NAVIGATION.element.offsetHeight, 10));
     }
 
+    this.scrollTopOld = undefined;
+    this.scrollTopFresh = document.body.scrollTop;
+    this.scrollDiff = 0;
+    this.scrollDirection = undefined;
+    this.scroll = function(event)
+    {
+        this.scrollDiff = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+        if(this.scrollDiff < 0)
+        {
+            this.scrollDirection = this.STD.DIRECTION.DOWN;
+            console.log("~! GLOBAL: SCROLL down");
+        }
+        else if(this.scrollDiff > 0 && this.scrollDiff != 0)
+        {
+            this.scrollDirection = this.STD.DIRECTION.UP;
+            console.log("~! GLOBAL: SCROLL up");
+        }
+        else
+        {
+            this.scrollDirection = undefined;
+        }
+
+        if(this.scrollDirection != undefined)
+        {
+            this.VIEWPORT.camScroll(this.scrollDirection);
+        }
+    }
+
     this.getMousePosition = function(event)
     {
         var mouse2d =
@@ -268,6 +296,15 @@ function GLOBAL()
                 {
                     horizFlag = true;
                     //console.log("~! MOUSE: horizontal")
+                    if(xDiff > 0)
+                    {
+                        this.mouseDirectionFresh = this.STD.DIRECTION.RIGHT;
+                    }
+                    else if(xDiff != 0)
+                    {
+                        this.mouseDirectionFresh = this.STD.DIRECTION.LEFT;
+                    }
+                    this.VIEWPORT.camDrag(this.mouseDirectionFresh);
                 }
                 else
                 {

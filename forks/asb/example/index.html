@@ -32,10 +32,12 @@
 
 				G.VIEWPORT.init();
 				G.VIEWPORT.test();
-				var grid = new GRID(G, GC, 1200, 12);
+				var grid = new GRID(G, GC, 24, 12);
+
 
 				var camInterval = setInterval(function(){G.VIEWPORT.animateCamera(G.VIEWPORT.GRID);}, 100)
 				var updateInterval = setInterval(function(){G.VIEWPORT.render();}, 25);
+
 			}
 
 			window.onmousemove = function(event)
@@ -52,6 +54,13 @@
 			{
 				G.mouseup(event);
 			}
+
+			window.onmousewheel = function(event)
+			{
+				console.log("SCROLLING: " + event.target)
+				G.scroll(event);
+			}
+
 		</script>
 	</body>
 </html>

@@ -86,10 +86,15 @@ function VIEWPORT(ele)
 
     this.camMouseOldPosition = {x:undefined,y:undefined};
     this.camDragFlag = false;
-    this.camOffset = 100;
-    this.camOffsetIncrement = 10;
+    this.camZOffset = 100;
+    this.camZOffsetIncrement = 10;
+    this.camRotationalOffsetMS = 0;
+    this.camRotationalOffsetIncrementMS = 100;
     this.camRadius = 250;
-    this.camConstant = 0.1;
+    this.camRadiusIncrement = 10;
+    this.camRadiusMin = 50;
+    this.camRadiusMax = 5000;
+    this.camSpeedConstant = 0.1;
     this.addToScene = function(obj)
     {
         var validGeometry = true;
@@ -111,10 +116,37 @@ function VIEWPORT(ele)
 VIEWPORT.prototype.animateCamera = function(obj)
 {
     this.camOldPosition = this.camera.position;
-    this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camConstant * this.GLOBAL.TIMER.elapsed() / 1000);
-    this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camConstant * this.GLOBAL.TIMER.elapsed() / 1000);
-    this.camera.position.y = obj.position.y + this.camOffset;
+    this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camSpeedConstant * ((this.GLOBAL.TIMER.elapsed() + this.camRotationalOffsetMS) / 1000));
+    this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camSpeedConstant * this.GLOBAL.TIMER.elapsed() / 1000);
+    this.camera.position.y = obj.position.y + this.camZOffset;
     this.camera.lookAt(obj.position);
+}
+
+VIEWPORT.prototype.camScroll = function(direction)
+{
+    switch(direction)
+    {
+        case this.GLOBAL.STD.DIRECTION.UP:
+            if(this.camRadius - this.camRadiusIncrement >= this.camRadiusMin)
+            {
+                this.camRadius -= this.camRadiusIncrement;
+            }
+            else
+            {
+                this.camRadius = this.camRadiusMin;
+            }
+            break;
+        case this.GLOBAL.STD.DIRECTION.DOWN:
+            if(this.camRadius + this.camRadiusIncrement <= this.camRadiusMax)
+            {
+                this.camRadius += this.camRadiusIncrement;
+            }
+            else
+            {
+                this.camRadius = this.camRadiusMax;
+            }
+            break;
+    }
 }
 
 VIEWPORT.prototype.camIsDragging = function()
@@ -140,10 +172,16 @@ VIEWPORT.prototype.camDrag = function(direction)
         switch(direction)
         {
             case this.GLOBAL.STD.DIRECTION.UP:
-                this.camOffset += this.camOffsetIncrement;
+                this.camZOffset += this.camZOffsetIncrement;
                 break;
             case this.GLOBAL.STD.DIRECTION.DOWN:
-                this.camOffset -= this.camOffsetIncrement;
+                this.camZOffset -= this.camZOffsetIncrement;
+                break;
+            case this.GLOBAL.STD.DIRECTION.LEFT:
+                this.camRotationalOffsetMS -= this.camRotationalOffsetIncrementMS;
+                break;
+            case this.GLOBAL.STD.DIRECTION.RIGHT:
+                this.camRotationalOffsetMS += this.camRotationalOffsetIncrementMS;
                 break;
         }
 }
