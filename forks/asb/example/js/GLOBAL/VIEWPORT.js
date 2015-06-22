@@ -84,7 +84,6 @@ function VIEWPORT(ele)
     }
 
 
-    this.camTarget = undefined;
     this.camMouseOldPosition = {x:undefined,y:undefined};
     this.camDragFlag = false;
     this.camZOffset = 100;
@@ -104,30 +103,23 @@ function VIEWPORT(ele)
             console.log("~! VIEWPORT: Attempting to display object (id:" + obj.id + ")")
             if(obj.id == this.GLOBAL.getGridID())
             {
-                this.camSetTarget(obj);
                 this.GRID = obj;
                 console.log("~!~! GRID displaying");
             }
             this.scene.add(obj);
             console.log("~! VIEWPORT: Added object (id:" + obj.id + ") to scene")
-            this.animateCamera();
+            this.animateCamera(obj);
         }
     }
 }
 
-VIEWPORT.prototype.camSetTarget = function(obj)
-{
-    this.camTarget = obj;
-}
-
-VIEWPORT.prototype.animateCamera = function()
+VIEWPORT.prototype.animateCamera = function(obj)
 {
     this.camOldPosition = this.camera.position;
-
-    this.camera.lookAt(this.camTarget);
     this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camSpeedConstant * ((this.GLOBAL.TIMER.elapsed() + this.camRotationalOffsetMS) / 1000));
     this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camSpeedConstant * this.GLOBAL.TIMER.elapsed() / 1000);
     this.camera.position.y = obj.position.y + this.camZOffset;
+    this.camera.lookAt(obj.position);
 }
 
 VIEWPORT.prototype.camScroll = function(direction)

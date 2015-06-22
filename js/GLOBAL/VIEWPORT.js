@@ -203,7 +203,7 @@ VIEWPORT.prototype.test = function()
 
     var xRange = this.element.offsetWidth * 2;
     var yRange = this.element.offsetHeight * 2;
-    var zRange = 500;
+    var zRange = this.element.offsetHeight * 2;
 
     for(var i = 0; i < 2500; i++){
         var grayness = Math.random() * 0.5 + 0.25;
