@@ -171,6 +171,7 @@ function GLOBAL()
             viewport.style.position = "absolute";
             viewport.style.left = contextMenu.offsetWidth;
             viewport.style.top = navigation.offsetHeight;
+            viewport.style.outline = "1px #FFFFFF solid";
         this.setViewport(viewport);
 
     }
@@ -287,6 +288,13 @@ function GLOBAL()
         //console.log(xFlag && yFlag);
         return xFlag && yFlag;
     }
+
+
+
+	this.rollOverGeo = new THREE.BoxGeometry( 12, 12, 12 );
+	this.rollOverMaterial = new THREE.MeshBasicMaterial( { color: this.STD.COLOR.BACKGROUND.LIGHT_GREY, opacity: 0.5, transparent: true } );
+	this.rollOverMesh = new THREE.Mesh( this.rollOverGeo, this.rollOverMaterial );
+//	this.display("_ROLLOVER_GHOST_", this.rollOverMesh, undefined);
 
     this.mouseObject = undefined;
 

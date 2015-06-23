@@ -14,3 +14,13 @@ function NAVIGATION(ele)
         this.element.style.height = nHeight;
     }
 }
+
+NAVIGATION.prototype.getWidth = function()
+{
+    return parseInt(this.element.offsetWidth, 10);
+}
+
+NAVIGATION.prototype.getHeight = function()
+{
+    return parseInt(this.element.offsetHeight, 10);
+}

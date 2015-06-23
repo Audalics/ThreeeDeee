@@ -86,6 +86,16 @@ function VIEWPORT(ele)
                 this.mouseTargetCurrentHex = this.mouseTarget.object.material.color.getHex();
                 this.mouseTarget.object.material.color.setHex(this.GLOBAL.STD.COLOR.MOUSE.OVER.toHex())
             }
+            else if(this.mouseTarget != intersects[0])
+            {
+                this.mouseTarget.object.material.color.setHex(this.mouseTargetCurrentHex)
+                this.mouseTargetCurrentHex = undefined;
+                this.mouseTarget = undefined;
+                
+                this.mouseTarget = intersects[0];
+                this.mouseTargetCurrentHex = this.mouseTarget.object.material.color.getHex();
+                this.mouseTarget.object.material.color.setHex(this.GLOBAL.STD.COLOR.MOUSE.OVER.toHex())
+            }
         }
         else
         {

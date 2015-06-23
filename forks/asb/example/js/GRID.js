@@ -24,6 +24,10 @@ function GRID(g, gc, size, step)
     {
         if(this.GEO_CONTROL != undefined)
         {
+            var planeGeometry = new THREE.PlaneBufferGeometry(2 * this.size,2*this.size, 2 * this.size);
+            var planeMaterial = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+            var planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
+
             this.geometry = new THREE.Geometry();
             for (var i = -this.size; i <= this.size; i += this.step) {
                 this.geometry.vertices.push(new THREE.Vector3(-this.size, 0, i));
@@ -38,6 +42,7 @@ function GRID(g, gc, size, step)
             var line = new THREE.Line(this.geometry, this.material, THREE.LinePieces);
 
             this.object.add(line)
+            this.object.add(planeMesh);
             console.log("~! GRID: Attempting to be seen! (id:" + this.object.id + ")")
             this.GLOBAL.setGridID(this.object.id);
             this.GEO_CONTROL.add("_GRID_", this.object, undefined);

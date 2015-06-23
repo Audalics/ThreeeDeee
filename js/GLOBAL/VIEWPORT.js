@@ -46,8 +46,9 @@ function VIEWPORT(ele)
 
         this.addToScene(new THREE.AmbientLight(0x404040));
 
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setSize(this.element.offsetWidth, this.element.offsetHeight);
+        this.renderer.setClearColor(this.GLOBAL.STD.COLOR.BACKGROUND.DARK_GREY.toString());
 
         this.element.appendChild(this.renderer.domElement);
 
@@ -63,8 +64,48 @@ function VIEWPORT(ele)
 
     }
 
+    this.raycaster = new THREE.Raycaster();
+    this.mouseTarget = undefined;
+    this.mouseTargetCurrentHex = undefined;
+    this.mousePosition = undefined;
     this.render = function()
     {
+        this.camera.updateMatrixWorld();
+
+        this.mousePosition = this.GLOBAL.getMousePosition();
+
+        var vec = new THREE.Vector3(this.mousePosition.x, this.mousePosition.y, 1).unproject(this.camera);
+        this.raycaster.set(this.camera.position, vec.sub(this.camera.position).normalize());
+        var objects = this.scene.children;
+        var intersects = this.raycaster.intersectObjects(objects, true)
+        if(intersects.length > 0)
+        {
+            if(this.mouseTarget == undefined)
+            {
+                this.mouseTarget = intersects[0];
+                this.mouseTargetCurrentHex = this.mouseTarget.object.material.color.getHex();
+                this.mouseTarget.object.material.color.setHex(this.GLOBAL.STD.COLOR.MOUSE.OVER.toHex())
+            }
+            else if(this.mouseTarget != intersects[0])
+            {
+                this.mouseTarget.object.material.color.setHex(this.mouseTargetCurrentHex)
+                this.mouseTargetCurrentHex = undefined;
+                this.mouseTarget = undefined;
+                
+                this.mouseTarget = intersects[0];
+                this.mouseTargetCurrentHex = this.mouseTarget.object.material.color.getHex();
+                this.mouseTarget.object.material.color.setHex(this.GLOBAL.STD.COLOR.MOUSE.OVER.toHex())
+            }
+        }
+        else
+        {
+            if(this.mouseTarget != undefined)
+            {
+                this.mouseTarget.object.material.color.setHex(this.mouseTargetCurrentHex)
+                this.mouseTargetCurrentHex = undefined;
+                this.mouseTarget = undefined;
+            }
+        }
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -83,15 +124,21 @@ function VIEWPORT(ele)
         return this.scene;
     }
 
+    this.getMouseTarget = function()
+    {
+        return this.mouseTarget;
+    }
+
 
     this.camMouseOldPosition = {x:undefined,y:undefined};
     this.camDragFlag = false;
+    this.camHasBeenMoved = false;
     this.camZOffset = 100;
-    this.camZOffsetIncrement = 10;
+    this.camZOffsetIncrement = 25;
     this.camRotationalOffsetMS = 0;
-    this.camRotationalOffsetIncrementMS = 100;
+    this.camRotationalOffsetIncrementMS = 0.25;
     this.camRadius = 250;
-    this.camRadiusIncrement = 10;
+    this.camRadiusIncrement = 5;
     this.camRadiusMin = 50;
     this.camRadiusMax = 5000;
     this.camSpeedConstant = 0.1;
@@ -100,24 +147,34 @@ function VIEWPORT(ele)
         var validGeometry = true;
         if(validGeometry) // Check for good geometry
         {
-            console.log("~! VIEWPORT: Attempting to display object (id:" + obj.id + ")")
+            //console.log("~! VIEWPORT: Attempting to display object (id:" + obj.id + ")")
             if(obj.id == this.GLOBAL.getGridID())
             {
                 this.GRID = obj;
-                console.log("~!~! GRID displaying");
+                //console.log("~!~! GRID displaying");
             }
             this.scene.add(obj);
-            console.log("~! VIEWPORT: Added object (id:" + obj.id + ") to scene")
+            console.log("~! VIEWPORT: Added object (id:" + obj.id + ",name:" + this.GEO_CONTROL.request(obj.id).name + ") to scene")
             this.animateCamera(obj);
         }
     }
 }
 
+VIEWPORT.prototype.getWidth = function()
+{
+    return parseInt(this.element.offsetWidth, 10);
+}
+
+VIEWPORT.prototype.getHeight = function()
+{
+    return parseInt(this.element.offsetHeight, 10);
+}
+
 VIEWPORT.prototype.animateCamera = function(obj)
 {
     this.camOldPosition = this.camera.position;
-    this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camSpeedConstant * ((this.GLOBAL.TIMER.elapsed() + this.camRotationalOffsetMS) / 1000));
-    this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camSpeedConstant * this.GLOBAL.TIMER.elapsed() / 1000);
+    this.camera.position.x = obj.position.x + this.camRadius * Math.cos(this.camSpeedConstant * (this.camRotationalOffsetMS));
+    this.camera.position.z = obj.position.z + this.camRadius * Math.sin(this.camSpeedConstant * (this.camRotationalOffsetMS));
     this.camera.position.y = obj.position.y + this.camZOffset;
     this.camera.lookAt(obj.position);
 }
@@ -149,6 +206,16 @@ VIEWPORT.prototype.camScroll = function(direction)
     }
 }
 
+VIEWPORT.prototype.getScene = function()
+{
+    return this.scene;
+}
+
+VIEWPORT.prototype.getCamera = function()
+{
+    return this.camera;
+}
+
 VIEWPORT.prototype.camIsDragging = function()
 {
     return this.camDragFlag;
@@ -156,18 +223,24 @@ VIEWPORT.prototype.camIsDragging = function()
 
 VIEWPORT.prototype.camDragStart = function()
 {
-    console.log("~! VIEWPORT: CAM DRAG start");
+    //console.log("~! VIEWPORT: CAM DRAG start");
     this.camDragFlag = true;
 }
 
 VIEWPORT.prototype.camDragStop = function()
 {
-    console.log("~! VIEWPORT: CAM DRAG stop");
+    //console.log("~! VIEWPORT: CAM DRAG stop");
     this.camDragFlag = false;
+    if(this.camHasBeenMoved)
+    {
+        setTimeout(function(){this.camHasBeenMoved = false;}, 1000);
+    }
 }
 
 VIEWPORT.prototype.camDrag = function(direction)
 {
+    if(!this.camHasBeenMoved)
+        this.camHasBeenMoved = true;
     if(this.camDragFlag)
         switch(direction)
         {
@@ -198,27 +271,21 @@ VIEWPORT.prototype.test = function()
     var geometry, material, mesh;
     geometry = new THREE.BoxGeometry(5, 5, 5);
 
-    var cubes = new THREE.Object3D();
-    this.GLOBAL.display(cubes);
-
     var xRange = this.element.offsetWidth * 2;
     var yRange = this.element.offsetHeight * 2;
-    var zRange = this.element.offsetHeight * 2;
+    var zRange = this.element.offsetWidth * 2;
+        var cubes = new THREE.Object3D();
 
-    for(var i = 0; i < 2500; i++){
-        var grayness = Math.random() * 0.5 + 0.25;
+    for(var i = 0; i < 1000; i++){
         material = new THREE.MeshBasicMaterial();
         var cube = new THREE.Mesh(geometry, material);
-        material.color.setRGB(grayness, grayness, grayness);
+        var decider = Math.random() * 5;
+        var matColor = this.GLOBAL.STD.COLOR.BACKGROUND.GREEN.toString();
+
+        material.color.set(matColor);
         cube.position.set(xRange * (0.5 - Math.random()), yRange * (0.5 - Math.random()), zRange * (0.5 - Math.random()));
         cube.rotation.set(Math.random(), Math.random(), Math.random());
-        cube.grayness = grayness;
         cubes.add(cube);
+        this.GLOBAL.display("_TEST_CUBE_" + i + "_", cubes, undefined);
     }
-
-    this.geometry = new THREE.BoxGeometry(10, 100, 100);
-    this.material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: false});
-
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
-    //this.GLOBAL.display(this.mesh);
 }

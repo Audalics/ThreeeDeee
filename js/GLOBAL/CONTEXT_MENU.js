@@ -14,3 +14,13 @@ function CONTEXT_MENU(ele)
         this.element.style.height = nHeight;
     }
 }
+
+CONTEXT_MENU.prototype.getWidth = function()
+{
+    return parseInt(this.element.offsetWidth, 10);
+}
+
+CONTEXT_MENU.prototype.getHeight = function()
+{
+    return parseInt(this.element.offsetHeight, 10);
+}
