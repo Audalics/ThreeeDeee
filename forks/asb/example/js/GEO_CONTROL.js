@@ -5,6 +5,7 @@ function GEO_CONTROL(GLOBAL)
 
     this.visible = [];
     this.visibleObjects = [];
+    this.unrolloverable = [];
     this.hidden = [];
     this.VIEWPORT = this.GLOBAL.getViewport();
 
@@ -20,7 +21,11 @@ function GEO_CONTROL(GLOBAL)
                 object:obj,
                 physMods:phys_mods
             };
-            this.visibleObjects.push(this.visible[obj.id].object);
+            if(nm != this.GLOBAL.STD.NAME.ROLLOVER)
+            {
+                this.visibleObjects.push(this.visible[obj.id].object);
+            }
+            
             this.idDump.push(obj.id);
             this.VIEWPORT.addToScene(obj);
         }

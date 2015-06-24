@@ -48,6 +48,13 @@ function GLOBAL()
                 OVER:this.PINK
             }
         },
+        NAME:
+        {
+            ROLLOVER:"_ROLLOVER_",
+            VIEWPORT:"_VIEWPORT_",
+            NAVIGATION:"_NAVIGATION_",
+            CONTEXT_MENU:"_CONTEXT_MENU_"
+        },
         SIZE:
         {
             // true values are 100%
@@ -142,7 +149,7 @@ function GLOBAL()
 
         // Set up nav bar
         var navigation = document.createElement("div");
-            navigation.id = "_NAVIGATION";
+            navigation.id = this.STD.NAME.NAVIGATION;
             navigation.style.background = this.STD.COLOR.BACKGROUND.BLUE.toString();
             navigation.style.width = this.WIDTH;
             navigation.style.height = this.STD.SIZE.NAVIGATION.height;
@@ -153,7 +160,7 @@ function GLOBAL()
 
         // Set up context menu
         var contextMenu = document.createElement("div");
-            contextMenu.id = "_CONTEXT_MENU";
+            contextMenu.id = this.STD.NAME.CONTEXT_MENU;
             contextMenu.style.background = this.STD.COLOR.BACKGROUND.PINK.toString();
             contextMenu.style.width = this.STD.SIZE.CONTEXT_MENU.width;
             contextMenu.style.height = this.HEIGHT - navigation.offsetHeight;
@@ -164,7 +171,7 @@ function GLOBAL()
 
         // Set up viewport
         var viewport = document.createElement("div");
-            viewport.id = "_VIEWPORT";
+            viewport.id = this.STD.NAME.VIEWPORT;
             viewport.style.background = this.STD.COLOR.BACKGROUND.GREEN.toString();
             viewport.style.width = this.WIDTH - contextMenu.offsetWidth;
             viewport.style.height = this.HEIGHT - navigation.offsetHeight;
@@ -310,6 +317,11 @@ function GLOBAL()
 
         if(this.mouseDragFlag)
         {
+            if(event.which == 1 && this.mouseOnViewport())
+            {
+                // Clicked in VIEWPORT
+                this.VIEWPORT.camDragStart()
+            }
             if(this.VIEWPORT.camIsDragging())
             {
                 //console.log("~! MOUSE: DRAGGING");
@@ -365,11 +377,6 @@ function GLOBAL()
                 this.mousePositionFresh = this.getMousePosition(event);
                 //console.log("~! GLOBAL: MOUSE is down");
                 this.mouseDragFlag = true;
-                if(this.mouseOnViewport())
-                {
-                    // Clicked in VIEWPORT
-                    this.VIEWPORT.camDragStart()
-                }
                 break;
             case 2: // Middle mouse button
                 event.preventDefault()

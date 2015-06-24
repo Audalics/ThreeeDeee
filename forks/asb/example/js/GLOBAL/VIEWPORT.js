@@ -43,9 +43,6 @@ function VIEWPORT(ele)
         this.camera = new THREE.PerspectiveCamera(75, (parseInt(this.element.offsetWidth, 10) / parseInt(this.element.offsetHeight, 10)), 1, 10000);
         this.camera.position.z = 1000;
 
-
-        this.addToScene(new THREE.AmbientLight(0x404040));
-
         this.renderer = new THREE.WebGLRenderer({antialias:true});
         this.renderer.setSize(this.element.offsetWidth, this.element.offsetHeight);
         this.renderer.setClearColor(this.GLOBAL.STD.COLOR.BACKGROUND.DARK_GREY.toString());
@@ -65,6 +62,7 @@ function VIEWPORT(ele)
     }
 
     this.raycaster = new THREE.Raycaster();
+    this.rolloverObj = undefined;
     this.mouseTarget = undefined;
     this.mouseTargetCurrentHex = undefined;
     this.mousePosition = undefined;
@@ -75,8 +73,36 @@ function VIEWPORT(ele)
         this.mousePosition = this.GLOBAL.getMousePosition();
 
         var vec = new THREE.Vector3(this.mousePosition.x, this.mousePosition.y, 1).unproject(this.camera);
+
+        var vector = vec.clone();
+        var dir = vector.sub( this.camera.position ).normalize();
+
+        var dist = -1 * this.camera.position.z / dir.z;
+
+        this.mouseCoordinates = this.camera.position.clone().add( dir.multiplyScalar( dist ) );
+
+        console.log(this.mouseCoordinates)
+
+        if(this.rolloverObj == undefined)
+        {
+            var rolloverGeo = new THREE.BoxGeometry(12, 12, 12);
+            var rolloverMat = new THREE.MeshBasicMaterial({color:this.GLOBAL.STD.COLOR.BACKGROUND.LIGHT_GREY.toHex(), opcaity:0.5, transparent:true});
+            var rolloverMesh = new THREE.Mesh(rolloverGeo, rolloverMat);
+            this.rolloverObj = new THREE.Object3D();
+            this.rolloverObj.add(rolloverMesh);
+            this.GLOBAL.display(this.GLOBAL.STD.NAME.ROLLOVER, this.rolloverObj, undefined);
+        }
+        else
+        {
+
+        }
+
+        this.rolloverObj.position.x = this.mouseCoordinates.x;
+        this.rolloverObj.position.y = this.mouseCoordinates.y;
+        this.rolloverObj.position.z = this.mouseCoordinates.z;
+
         this.raycaster.set(this.camera.position, vec.sub(this.camera.position).normalize());
-        var objects = this.scene.children;
+        var objects = this.GEO_CONTROL.getVisible();
         var intersects = this.raycaster.intersectObjects(objects, true)
         if(intersects.length > 0)
         {
@@ -91,7 +117,7 @@ function VIEWPORT(ele)
                 this.mouseTarget.object.material.color.setHex(this.mouseTargetCurrentHex)
                 this.mouseTargetCurrentHex = undefined;
                 this.mouseTarget = undefined;
-                
+
                 this.mouseTarget = intersects[0];
                 this.mouseTargetCurrentHex = this.mouseTarget.object.material.color.getHex();
                 this.mouseTarget.object.material.color.setHex(this.GLOBAL.STD.COLOR.MOUSE.OVER.toHex())
