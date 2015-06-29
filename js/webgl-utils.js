@@ -28,7 +28,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
+
 /**
  * @fileoverview This file contains functions every webgl program will need
  * a version of one way or another.
@@ -79,7 +80,7 @@ var makeFailHTML = function(msg) {
  * @type {string}
  */
 var GET_A_WEBGL_BROWSER = '' +
- 'This page requires a browser that supports WebGL.<br/>' +
+  'This page requires a browser that supports WebGL.<br/>' +
   '<a href="http://get.webgl.org">Click here to upgrade your browser.</a>';
 
 /**
@@ -94,40 +95,28 @@ var OTHER_PROBLEM = '' +
  * Creates a webgl context. If creation fails it will
  * change the contents of the container of the <canvas>
  * tag to an error message with the correct links for WebGL.
-* @param {Element} canvas. The canvas element to create a
+ * @param {Element} canvas. The canvas element to create a
  *     context from.
  * @param {WebGLContextCreationAttirbutes} opt_attribs Any
  *     creation attributes you want to pass in.
- * @param {function:(msg)} opt_onError An function to call
- *     if there is an error during creation.
  * @return {WebGLRenderingContext} The created context.
  */
-var setupWebGL = function(canvas, opt_attribs, opt_onError) {
-  function handleCreationError(msg) {
+var setupWebGL = function(canvas, opt_attribs) {
+  function showLink(str) {
     var container = canvas.parentNode;
     if (container) {
-    var str = window.WebGLRenderingContext ?
-           OTHER_PROBLEM :
-GET_A_WEBGL_BROWSER;
-      if (msg) {
-        str += "<br/><br/>Status: " + msg;
-      }
-     container.innerHTML = makeFailHTML(str);
+      container.innerHTML = makeFailHTML(str);
     }
   };
 
-  opt_onError = opt_onError || handleCreationError;
-
-  if (canvas.addEventListener) {
-    canvas.addEventListener("webglcontextcreationerror", function(event) {
-          opt_onError(event.statusMessage);
-        }, false);
+  if (!window.WebGLRenderingContext) {
+    showLink(GET_A_WEBGL_BROWSER);
+    return null;
   }
+
   var context = create3DContext(canvas, opt_attribs);
   if (!context) {
-    if (!window.WebGLRenderingContext) {
-opt_onError("");
-    }
+    showLink(OTHER_PROBLEM);
   }
   return context;
 };
@@ -159,15 +148,15 @@ return {
 }();
 
 /**
-* Provides requestAnimationFrame in a cross browser way.
+ * Provides requestAnimationFrame in a cross browser way.
  */
 window.requestAnimFrame = (function() {
-        return window.requestAnimationFrame ||
-window.webkitRequestAnimationFrame ||
+  return window.requestAnimationFrame ||
+         window.webkitRequestAnimationFrame ||
          window.mozRequestAnimationFrame ||
-   window.oRequestAnimationFrame ||
+         window.oRequestAnimationFrame ||
          window.msRequestAnimationFrame ||
-function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
+         function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
            window.setTimeout(callback, 1000/60);
          };
 })();
