@@ -15,78 +15,43 @@ function Global()
         white:
         {
             hex:0xffffff,
-            rgb:
-            {
-                r:255,
-                g:255,
-                b:255
-            },
+            rgba:"rgb(255,255,255,1)",
             string:"#ffffff"
         },
         black:
         {
             hex:0x000000,
-            rgb:
-            {
-                r:0,
-                g:0,
-                b:0
-            },
+            rgba:"rgb(0,0,0,1)",
             string:"#000000"
         },
         red:
         {
             hex:0xff0000,
-            rgb:
-            {
-                r:255,
-                g:0,
-                b:0
-            },
+            rgba:"rgb(255,0,0,1)",
             string:"#ff0000"
         },
         green:
         {
             hex:0x00ff00,
-            rgb:
-            {
-                r:0,
-                g:255,
-                b:0
-            },
-            string:"#000000"
+            rgba:"rgb(0,255,0,1)",
+            string:"#00ff00"
         },
         blue:
         {
             hex:0x0000ff,
-            rgb:
-            {
-                r:0,
-                g:0,
-                b:255
-            },
+            rgba:"rgb(0,0,255,1)",
             string:"#0000ff"
         },
         gold:
         {
             hex:0xffd700,
-            rgb:
-            {
-                r:255,
-                g:215,
-                b:0
-            },
+            rgba:"rgb(255,215,0,1)",
             string:"#ffd700"
         },
         grey:
         {
             hex:0xcccccc,
-            rgb:
-            {
-                r:204,
-                g:204,
-                b:204
-            },
+            rgba:"rgb(204,204,204,1)",
             string:"#cccccc"
         },
         gray:
@@ -98,7 +63,18 @@ function Global()
         }
     }
     this.color.gray = this.color.grey;
+    //background: -webkit-linear-gradient(top,  rgba(255,1,5,0) 0%,rgba(255,0,4,0) 59%,rgba(255,0,4,1) 60%); /* Chrome10+,Safari5.1+ */
+    this.orbScale = 0.15;
+    this.orbSize = function()
+    {
+        return (this.width() * this.orbScale);
+    };
 
+    this.expBarSize = function()
+    {
+        return (this.width() - (2 * this.orbSize()));
+    };
+    var self = this;
     this.domElements =
     {
         list:
@@ -121,8 +97,10 @@ function Global()
                 "healthOrb",
                 "manaOrb",
                 "expBar",
-                /*
                 "staminaBar",
+                "consumablesBar",
+                "skillA"
+                /*
                 "skillButtons",
                 "potionBar",
                 "hotkeyPanel"
@@ -134,8 +112,8 @@ function Global()
             viewport:
             {
                 id:"_VIEWPORT_DOM_",
-                width:null,
-                height:null,
+                width:self.width(),
+                height:self.height(),
                 color:this.color.grey,
                 position:null,
                 top:null,
@@ -155,8 +133,8 @@ function Global()
             healthOrb:
             {
                 id:"_HEALTH_ORB_DOM_",
-                width:250,
-                height:250,
+                width:self.orbSize(),
+                height:self.orbSize(),
                 color:this.color.red,
                 position:"absolute",
                 top:null,
@@ -167,8 +145,8 @@ function Global()
             manaOrb:
             {
                 id:"_MANA_ORB_DOM_",
-                width:250,
-                height:250,
+                width:self.orbSize(),
+                height:self.orbSize(),
                 color:this.color.blue,
                 position:"absolute",
                 top:null,
@@ -179,19 +157,76 @@ function Global()
             expBar:
             {
                 id:"_EXP_BAR_DOM_",
-                width:400,
-                height:5,
+                width:self.expBarSize(),
+                height:self.orbSize() * .15,
                 color:this.color.gold,
                 position:"absolute",
                 top:null,
-                left:250,
-                bottom:5,
+                left:self.orbSize(),
+                bottom:0,
                 right:null
             },
-
-            /*
             staminaBar:
-            {},
+            {
+                id:"_STAMINA_BAR_DOM_",
+                width:self.expBarSize(),
+                height:(self.orbSize() * .025) > 0 ? self.orbSize() * .025 : 5,
+                color:this.color.white,
+                position:"absolute",
+                top:null,
+                left:self.orbSize(),
+                bottom:self.orbSize() * .15,
+                right:null
+            },
+            consumablesBar:
+            {
+                id:"_CONSUMABLES_BAR_DOM_",
+                width:self.expBarSize(),
+                height:self.orbSize() * .2,
+                color:this.color.grey,
+                position:"absolute",
+                top:null,
+                left:self.orbSize(),
+                bottom:self.orbSize() * .175,
+                right:null
+            },
+            skillA:
+            {
+                id:"_SKILL_A_DOM_",
+                width:self.orbSize() * .4,
+                height:self.orbSize() * .4,
+                color:this.color.green,
+                position:"absolute",
+                top:null,
+                left:self.orbSize(),
+                bottom:self.orbSize() * .375,
+                right:null
+            },
+            skillB:
+            {
+                id:"_SKILL_B_DOM_",
+                width:self.orbSize() * .4,
+                height:self.orbSize() * .4,
+                color:this.color.green,
+                position:"absolute",
+                top:null,
+                left:null,
+                bottom:self.orbSize() * .375,
+                right:self.orbSize()
+            },
+            hotkeyBar:
+            {
+                id:"_HOTKEY_BAR_DOM_",
+                width:self.expBarSize() - (2 * (self.orbSize() * .4)),
+                height:(self.orbSize() * .4) * .66,
+                color:this.color.red,
+                position:"absolute",
+                top:null,
+                left:self.orbSize() + (self.orbSize() * .4),
+                bottom:self.orbSize() * .375,
+                right:null
+            }
+            /*
             skillButtons:
             {},
             potionBar:
@@ -217,6 +252,15 @@ function Global()
 
     this.viewport = new Viewport(this);
 }
+
+Global.prototype.width = function()
+{
+    return window.innerWidth;
+};
+Global.prototype.height = function()
+{
+    return window.innerHeight;
+};
 
 // Initialize
 Global.prototype.init = function()
