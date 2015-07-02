@@ -65,7 +65,7 @@ function Global()
                 g:0,
                 b:255
             },
-            string:"#ff0000"
+            string:"#0000ff"
         },
         gold:
         {
@@ -88,151 +88,130 @@ function Global()
                 b:204
             },
             string:"#cccccc"
+        },
+        gray:
+        {
+            // Will be the same as grey outside of this block VVVVVVV
+            //                                                 VVVVV
+            //                                                  VVV
+            //                                                   V
         }
     }
+    this.color.gray = this.color.grey;
 
     this.domElements =
     {
-        name:
+        list:
         {
-            navigation:"_NAVIGATION_DOM_",
-            sidebar:"_SIDEBAR_DOM_",
-            viewport:"_VIEWPORT_DOM_",
-
-            healthOrb:"_HEALTH_ORB_DOM_",
-            manaOrb:"_MANA_ORB_DOM_",
-            expBar:"_EXP_BAR_DOM_",
-            staminaBar:"_STAMIN_BAR_DOM_",
-            skillButtons:"_SKILL_BUTTONS_DOM_",
-            skillButton:
+            ofLists:
+            {
+                main:"main",
+                inGame:"inGame"
+            },
+            main:
             [
-                "_SKILL_BUTTON_A_DOM_",
-                "_SKILL_BUTTON_B_DOM_"
+                "viewport"
+                /*
+                "navigation",
+                "submenu"
+                */
             ],
-            potionBar:"_POTION_BAR_DOM_",
-            potionSlot:
-            {
-                a:"_POTION_SLOT_A_DOM_",
-                b:"_POTION_SLOT_B_DOM_",
-                c:"_POTION_SLOT_C_DOM_",
-                d:"_POTION_SLOT_D_DOM_",
-            },
-            hotkeyPanel:"_HOTKEY_PANEL_DOM_",
-            hotkeyButton:
-            {
-                a:"_HOTKEY_BUTTON_A_DOM_",
-                b:"_HOTKEY_BUTTON_B_DOM_",
-                c:"_HOTKEY_BUTTON_C_DOM_",
-                d:"_HOTKEY_BUTTON_D_DOM_",
-                e:"_HOTKEY_BUTTON_E_DOM_",
-                f:"_HOTKEY_BUTTON_F_DOM_",
-                g:"_HOTKEY_BUTTON_G_DOM_",
-                h:"_HOTKEY_BUTTON_H_DOM_",
-            },
+            inGame:
+            [
+                "healthOrb",
+                "manaOrb",
+                "expBar",
+                /*
+                "staminaBar",
+                "skillButtons",
+                "potionBar",
+                "hotkeyPanel"
+                */
+            ]
         },
-        width:
+        main:
         {
-            viewport:"100%",
-
-            healthOrb:200,
-            manaOrb:200,
-            expBar:200,
-            staminaBar:200,
-            skillButton:50,
-            potionBar:100,
-            hotkeyPanel:100
+            viewport:
+            {
+                id:"_VIEWPORT_DOM_",
+                width:null,
+                height:null,
+                color:this.color.grey,
+                position:null,
+                top:null,
+                left:null,
+                bottom:null,
+                right:null
+            }
+            /*
+            navigation:
+            {},
+            submenu:
+            {}
+            */
         },
-        height:
-        {
-            viewport:"100%",
-
-            healthOrb:200,
-            manaOrb:200,
-            expBar:10,
-            staminaBar:2,
-            skillButton:50,
-            potionBar:25,
-            hotkeyPanel:20
-        },
-        position:
+        inGame:
         {
             healthOrb:
             {
-                isAbsolute:true,
-                //top:,
+                id:"_HEALTH_ORB_DOM_",
+                width:250,
+                height:250,
+                color:this.color.red,
+                position:"absolute",
+                top:null,
                 left:0,
                 bottom:0,
-                //right:
+                right:null
             },
             manaOrb:
             {
-                isAbsolute:true,
-                //top:,
-                //left:,
+                id:"_MANA_ORB_DOM_",
+                width:250,
+                height:250,
+                color:this.color.blue,
+                position:"absolute",
+                top:null,
+                left:null,
                 bottom:0,
                 right:0
             },
             expBar:
             {
-                isAbsolute:true,
-                //top:,
-                left:200,
-                bottom:10,
-                //right:
+                id:"_EXP_BAR_DOM_",
+                width:400,
+                height:5,
+                color:this.color.gold,
+                position:"absolute",
+                top:null,
+                left:250,
+                bottom:5,
+                right:null
             },
-            staminaBar:
-            {
-                isAbsolute:true,
-                //top:,
-                left:200,
-                bottom:2,
-                //right:
-            },
-            skillButton:
-            [
-                {
-                    isAbsolute:true,
-                    //top:,
-                    left:200,
-                    bottom:150,
-                    //right:
-                },
-                {
-                    isAbsolute:true,
-                    //top:,
-                    //left:,
-                    bottom:150,
-                    right:400
-                }
-            ],
-            potionBar:
-            {
-                isAbsolute:true,
-                //top:,
-                left:200,
-                bottom:150,
-                //right:
-            },
-            hotkeyPanel:
-            {
-                isAbsolute:true,
-                //top:,
-                left:200,
-                bottom:100,
-                //right:
-            },
-        },
-        color:
-        {
-            viewport:this.color.gold,
 
-            healthOrb:this.color.red,
-            manaOrb:this.color.blue,
-            expBar:this.color.gold,
-            staminaBar:this.color.white,
-            skillButton:this.color.red,
-            potionBar:this.color.green,
-            hotkeyPanel:this.color.green,
+            /*
+            staminaBar:
+            {},
+            skillButtons:
+            {},
+            potionBar:
+            {},
+            hotkeyPanel:
+            {}
+
+            //  Template for these styles (plz update all dem niggs if chng thx)
+                id:null,
+                width:null,
+                height:null,
+                color:null,
+                position:null,
+                top:null,
+                left:null,
+                bottom:null,
+                right:null
+            //
+
+            */
         }
     }
 
