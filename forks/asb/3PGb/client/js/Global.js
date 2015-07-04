@@ -16,6 +16,7 @@ function Global()
         {
             hex:0xffffff,
             rgba:"rgb(255,255,255,1)",
+            rgbaHalf:"rgb(255,255,255,0.5)",
             string:"#ffffff"
         },
         black:
@@ -105,6 +106,10 @@ function Global()
                 "potionBar",
                 "hotkeyPanel"
                 */
+            ],
+            chat:
+            [
+                "bubble"
             ]
         },
         main:
@@ -234,7 +239,7 @@ function Global()
             hotkeyPanel:
             {}
 
-            //  Template for these styles (plz update all dem niggs if chng thx)
+            //  Template for these styles (plz update all dem niggs if chaeng thx)
                 id:null,
                 width:null,
                 height:null,
@@ -247,19 +252,39 @@ function Global()
             //
 
             */
+        },
+        chat:
+        {
+            bubble:
+            {
+                id:"_BUBBLE_",
+                width:self.bubbleSize(),
+                color:this.color.grey,
+                position:"absolute",
+                top:0,
+                left:0
+            }
         }
     }
 
-    this.viewport = new Viewport(this);
+    this.zVal =
+    {
+        camera:
+        {
+            dev:1000
+        }
+    }
+
+    this.delimeter = "_";
 }
 
 Global.prototype.width = function()
 {
-    return window.innerWidth;
+    return parseInt(window.innerWidth, 10);
 };
 Global.prototype.height = function()
 {
-    return window.innerHeight;
+    return parseInt(window.innerHeight, 10);
 };
 
 // Initialize
@@ -279,3 +304,23 @@ Global.prototype.getPlayerhealth = function()
 {
     return this.viewport;
 } // End getViewport
+
+Global.prototype.setRenderer = function(renderer)
+{
+    this.viewport.appendRenderer(renderer.domElement)
+}
+
+Global.prototype.resize = function(event)
+{
+    this.viewport.resize(event);
+}
+
+Global.prototype.setBubbleManager = function(bMan)
+{
+    this.bubbleManager = bMan;
+}
+
+Global.prototype.getNewBubbleId = function()
+{
+    return this.bubbleManager.getNewBubbleId();
+}

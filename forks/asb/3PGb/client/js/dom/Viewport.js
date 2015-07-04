@@ -14,13 +14,13 @@ function Viewport(g)
         this.healthOrbFill = 100;
 
     this.manaOrb = null;
-        this.manaOrbFill = 10;
+        this.manaOrbFill = 100;
 
     this.expBar = null;
-        this.expBarFill = 10;
+        this.expBarFill = 100;
 
     this.staminaBar = null;
-        this.staminaBarFill = 10;
+        this.staminaBarFill = 100;
 
     this.potionBar = null;
         this.aPotionSlot = null;
@@ -47,6 +47,8 @@ function Viewport(g)
         this.fHotkey = null;
         this.gHotkey = null;
         this.hHotkey = null;
+
+    this.renderer = new Renderer(this.global);
 }
 
 Viewport.prototype.getGradBG = function(color, percent, horizontalFlag)
@@ -90,16 +92,19 @@ Viewport.prototype.init = function()
 
     this.domElement = document.createElement("div");
     this.domElement.id = this.global.domElements.main.viewport.id;
-    this.domElement.style.width = this.global.domElements.main.viewport.width;
-    this.domElement.style.height = this.global.domElements.main.viewport.height;
+    this.domElement.style.width = this.global.width();
+    this.domElement.style.height = this.global.height();
     this.domElement.style.background = this.global.domElements.main.viewport.color.string;
 
+    document.body.appendChild(this.domElement);
+
     window.onmousedown = function(event){self.mousedown(event)};
+
     window.onmouseup = function(event){self.mouseup(event)};
+
     window.onmousemove = function(event){self.mousemove(event)};
-    document.body.appendChild(this.domElement);
-    window.oncontextmenu = function(){return false};
-    document.body.appendChild(this.domElement);
+
+    window.oncontextmenu = function(){return false;};
 
     for(var i = 0; i < this.guiElements.length; i++)
     {
@@ -273,4 +278,11 @@ Viewport.prototype.setUpdateInterval = function(ms)
 {
     var self = this;
     this.updateInterval = setInterval(function(){self.guiUpdate()}, ms)
+}
+
+Viewport.prototype.resize = function()
+{
+    this.domElement.style.width = this.global.width();
+    this.domElement.style.height = this.global.height();
+    this.renderer.resize();
 }

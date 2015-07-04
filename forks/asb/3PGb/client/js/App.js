@@ -6,12 +6,11 @@ function App()
 // Initialize
 App.prototype.init = function()
 {
-    this.global.init();
-
     this.previousState = null;
     this.isRendererReady = false;
     this.ready = false;
-    //this.storage = new Storage();
+    this.storage = new Storage();
+    this.storage.init();
     // this.watchNameInputInterval == setInterval(func, ms)
     // this.playButton.domElement = ??
     // this.play.domElement = ??
@@ -46,7 +45,7 @@ App.prototype.tryToStartGame = function()
 {
     var self = this;
 
-    if(username !== "")
+    if(this.username !== "")
     {
         if(!this.ready || !this.canStartGame())
         {
@@ -98,7 +97,7 @@ App.prototype.startGame = function()
 } // End startGame
 
 // Start
-App.prototype.start = function()
+App.prototype.start = function(username)
 {
     var self = this;
     var firstTimePlaying = !self.storage.hasAlreadyPlayed();
@@ -126,14 +125,7 @@ App.prototype.start = function()
             this.game.setServerOptions(config.build.host, config.build.port, username);
         }
 
-        this.game.run(function()
-        {
-            // Append started class
-            if(firstTimePlaying)
-            {
-                self.toggleInstructions();
-            }
-        });
+        this.game.run();
     }
 } // End start
 
@@ -171,63 +163,74 @@ App.prototype.setMousePosition = function(event)
 // Initialize the GUI
 App.prototype.initGUI = function()
 {
-    this.initHealthOrb();
-    this.initManaOrb();
-    this.initExpBar();
-    this.initStaminaBar();
-    this.initPotionBar();
-    this.initSkillButtons();
-    this.initHotkeyPanel();
+    var self = this;
+
+    this.global.init();
+
+    window.onresize = function(event){self.resize(event);};
 } // End initGUI
 
-// Initialize
-App.prototype.initHealthOrb = function()
+App.prototype.initEventListener = function()
 {
-    var scale = this.game.renderer.getScaleFactor();
-    var healthMaxRadius = this.global.healthOrb.radius - (12 * scale);
 
-    this.game.onPlayerHealthChange(function(health, maxHealth)
+}
+
+App.prototype.showChat = function()
+{
+
+}
+
+App.prototype.hideChat = function()
+{
+
+}
+
+App.prototype.showAchievementNotification = function(id, name)
+{
+
+}
+
+App.prototype.displayUnlockedAchievement = function(id)
+{
+
+}
+
+App.prototype.unlockAchievement = function(id, name)
+{
+    this.showAchievementNotification(id, name);
+    this.displayUnlockedAchievement(id);
+}
+
+App.prototype.initAchievementList = function(achievements)
+{
+    var self = this;
+    // Do some weird shit... idk check the other file
+}
+
+App.prototype.initUnlockedAchievements = function(ids)
+{
+    var self = this;
+    for(var i = 0; i < ids.length; i++)
     {
-        var orbFillHeight = Math.round(((healthMaxRadius * 2) / maxHealth) * (health > 0 ? hp : 0));
-        this.global.getViewport.setHealthOrbFillHeight(orbFillHeight);
-    })
-} // End initHealthOrb
+        self.displayUnlockedAchievement(ids[i]);
+    }
+}
 
-// Initialize the GUI
-App.prototype.initManaOrb = function()
+App.prototype.setAchievementData = function(element, name, desc)
 {
 
-} // End initManaOrb
+}
 
-// Initialize the GUI
-App.prototype.initExpBar = function()
+App.prototype.resize = function(event)
 {
-
-} // End initExpBar
-
-// Initialize the GUI
-App.prototype.initStaminaBar = function()
-{
-
-} // End initStaminaBar
-
-// Initialize the GUI
-App.prototype.initPotionBar = function()
-{
-
-} // End initPotionBar
-
-// Initialize the GUI
-App.prototype.initSkillButtons = function()
-{
-
-} // End initSkillButtons
-
-// Initialize the GUI
-App.prototype.initHotkeyPanel = function()
-{
-
-} // End initHotkeyPanel
+    if(this.game)
+    {
+        if(this.game.started)
+        {
+            this.global.resize();
+        }
+    }
+}
 
 // // // // // // // // // // // // //
 // // // // // // // // // // // // //
