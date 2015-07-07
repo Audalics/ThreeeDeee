@@ -20,8 +20,24 @@ function Main()
             }
         }
 
-        app.tryToStartGame();
+        // Bind click to play button and run this:
+//        app.tryToStartGame();
+
+        initGame();
     }
 
-    initApp();
+    var initGame = function()
+    {
+        game = new Game(app);
+        game.setup(app.global.viewport.domElement, app.global.chatInput.domElement);
+        game.setStorage(app.storage);
+        app.setGame(game);
+
+        if(app.isDesktop && app.supportsWorkers)
+        {
+            game.loadMap();
+        }
+
+        
+    }
 }

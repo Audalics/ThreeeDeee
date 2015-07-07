@@ -49,35 +49,34 @@ App.prototype.tryToStartGame = function()
     {
         if(!this.ready || !this.canStartGame())
         {
-            // Show loading screen
-        }
-        // unbind click event from play.domElement
-        var watchCanStart = setInterval(function()
-        {
-            console.log("~! App: waiting...");
-            if(self.canStartGame())
+            // unbind click event from play.domElement
+            var watchCanStart = setInterval(function()
             {
-                setTimeout(function()
+                console.log("~! App: waiting...");
+                if(self.canStartGame())
                 {
-                    if(!self.isMobile)
+                    setTimeout(function()
                     {
-                        // Remove loading screen
-                    }
-                }, 1500);
-                clearInterval(watchCanStart);
-                self.startGame(username, starting_callback);
-            }
-        }, 100);
-    }
-    else
-    {
-        // unbind click from play.domElement
-        this.startGame(username, starting_callback)
+                        if(!self.isMobile)
+                        {
+                            // Remove loading screen
+                        }
+                    }, 1500);
+                    clearInterval(watchCanStart);
+                    self.startGame(username, starting_callback);
+                }
+            }, 100);
+        }
+        else
+        {
+            // unbind click from play.domElement
+            this.startGame(username, starting_callback)
+        }
     }
 } // End tryToStartGame
 
 // Start Game
-App.prototype.startGame = function()
+App.prototype.startGame = function(username, starting_callback)
 {
     var self = this;
 

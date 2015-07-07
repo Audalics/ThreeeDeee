@@ -155,6 +155,30 @@ Viewport.prototype.init = function()
         this.domElement.appendChild(elem);
     }
 
+    var elem = document.createElement("div");
+    var elemInfo = this.global.domElements.chat.input;
+
+    elem.id = elemInfo.id;
+
+    elem.style.outline = "1px solid #000000";
+
+    elem.style.width = elemInfo.width;
+    elem.style.height = elemInfo.height;
+    elem.style.background = elemInfo.color.string;
+
+    elem.style.position = elemInfo.position;
+    elem.style.bottom = elemInfo.bottom;
+    elem.style.left = elemInfo.left;
+
+    var input = document.createElement("input");
+    input.id = elemInfo.id + "INPUT_";
+    input.type = "text";
+    input.style.width = "100%";
+    input.style.height = "100%";
+    elem.appendChild(input);
+
+    this.domElement.appendChild(elem);
+
     this.updateIntervalMs = 100;
     this.setUpdateInterval(this.updateIntervalMs);
 } // End init
