@@ -1,0 +1,460 @@
+"world":
+{
+    "id":"main",
+    "biomes":
+    [
+        { // 0
+            "name":"water"
+        },
+        { // 1
+            "name":"fire"
+        },
+        { // 2
+            "name":"sand"
+        },
+        { // 3
+            "name":"ice"
+        },
+        { // 4
+            "name":"swamp"
+        },
+        { // 5
+            "name":"stone"
+        },
+        { // 6
+            "name":"plains"
+        },
+        { // 7
+            "name":"forest"
+        }
+    ],
+    "continents":
+    [
+        { // 0
+            "name":"Bliazefend"
+        },
+        { // 1
+            "name":"Gleobrix"
+        },
+        { // 2
+            "name":"Ofea"
+        },
+        { // 3
+            "name":"Praemekis"
+        },
+        { // 4
+            "name":"Straitrafend"
+        },
+        { // 5
+            "name":"Vleibix",
+            "country-id-list":
+            []
+        }
+    ],
+    "countries":
+    [
+        { // 0
+            "name":"Aechai",
+
+        }
+    ],
+    "territories":
+    [
+        { // 0
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":250,"y":650},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":250,"y":650}
+            ],
+            "city-id-list":[]
+        },
+        { // 1
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":88,"y":0},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":88,"y":0}
+            ],
+            "city-id-list":[]
+        },
+        { // 2
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":1128,"y":85},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1128,"y":85}
+            ],
+            "city-id-list":[]
+        },
+        { // 3
+            "biome-id":6,
+            "vertices":
+            [
+                {"x":1128,"y":85},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":number,"y":number}
+            ],
+            "city-id-list":[]
+        },
+        { // 4
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":1008,"y":64},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1008,"y":64}
+            ],
+            "city-id-list":[]
+        },
+        { // 5
+            "biome-id":5,
+            "vertices":
+            [
+                {"x":1008,"y":64},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1008,"y":64}
+            ],
+            "city-id-list":[]
+        },
+        { // 6
+            "biome-id":7,
+            "vertices":
+            [
+                {"x":775,"y":167},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":775,"y":167}
+            ],
+            "city-id-list":[]
+        },
+        { // 7
+            "biome-id":7,
+            "vertices":
+            [
+                {"x":512,"y":200},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":512,"y":200}
+            ],
+            "city-id-list":[]
+        },
+        { // 8
+            "biome-id":5,
+            "vertices":
+            [
+                {"x":512,"y":200},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":512,"y":200}
+            ],
+            "city-id-list":[]
+        },
+        { // 9
+            "biome-id":7,
+            "vertices":
+            [
+                {"x":290,"y":317},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":290,"y":317}
+            ],
+            "city-id-list":[]
+        },
+        { // 10
+            "biome-id":6,
+            "vertices":
+            [
+                {"x":175,"y":93},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":175,"y":93}
+            ],
+            "city-id-list":[]
+        },
+        { // 11
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":175,"y":93},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":175,"y":93}
+            ],
+            "city-id-list":[]
+        },
+        { // 12
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":25,"y":125},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":25,"y":125}
+            ],
+            "city-id-list":[]
+        },
+        { // 13
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":146,"y":326},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":146,"y":326}
+            ],
+            "city-id-list":[]
+        },
+        { // 14
+            "biome-id":7,
+            "vertices":
+            [
+                {"x":403,"y":337},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":403,"y":337}
+            ],
+            "city-id-list":[]
+        },
+        { // 15
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":652,"y":315},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":652,"y":315}
+            ],
+            "city-id-list":[]
+        },
+        { // 16
+            "biome-id":6,
+            "vertices":
+            [
+                {"x":652,"y":315},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":652,"y":315}
+            ],
+            "city-id-list":[]
+        },
+        { // 17
+            "biome-id":4,
+            "vertices":
+            [
+                {"x":963,"y":243},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":963,"y":243}
+            ],
+            "city-id-list":[]
+        },
+        { // 18
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":1015,"y":356},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1015,"y":356}
+            ],
+            "city-id-list":[]
+        },
+        { // 19
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":1025,"y":450},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1025,"y":450}
+            ],
+            "city-id-list":[]
+        },
+        { // 20
+            "biome-id":5,
+            "vertices":
+            [
+                {"x":1015,"y":356},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1015,"y":356}
+            ],
+            "city-id-list":[]
+        },
+        { // 21
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":1035,"y":475},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1035,"y":475}
+            ],
+            "city-id-list":[]
+        },
+        { // 22
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":1030,"y":443},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":1030,"y":443}
+            ],
+            "city-id-list":[]
+        },
+        { // 23
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":925,"y":450},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":925,"y":450}
+            ],
+            "city-id-list":[]
+        },
+        { // 24
+            "biome-id":2,
+            "vertices":
+            [
+                {"x":875,"y":443},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":875,"y":443}
+            ],
+            "city-id-list":[]
+        },
+        { // 25
+            "biome-id":4,
+            "vertices":
+            [
+                {"x":750,"y":469},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":750,"y":469}
+            ],
+            "city-id-list":[]
+        },
+        { // 26
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":750,"y":469},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":750,"y":469}
+            ],
+            "city-id-list":[]
+        },
+        { // 27
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":450,"y":525},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":450,"y":525}
+            ],
+            "city-id-list":[]
+        },
+        { // 28
+            "biome-id":6,
+            "vertices":
+            [
+                {"x":422,"y":522},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":422,"y":522}
+            ],
+            "city-id-list":[]
+        },
+        { // 29
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":422,"y":522},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":422,"y":522}
+            ],
+            "city-id-list":[]
+        },
+        { // 30
+            "biome-id":3,
+            "vertices":
+            [
+                {"x":271,"y":525},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":271,"y":525}
+            ],
+            "city-id-list":[]
+        },
+        { // 31
+            "biome-id":4,
+            "vertices":
+            [
+                {"x":271,"y":525},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":271,"y":525}
+            ],
+            "city-id-list":[]
+        },
+        { // 32
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":83,"y":500},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":83,"y":500}
+            ],
+            "city-id-list":[]
+        },
+        { // 33
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":50,"y":525},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":50,"y":525}
+            ],
+            "city-id-list":[]
+        },
+        { // 34
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":55,"y":578},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":55,"y":578}
+            ],
+            "city-id-list":[]
+        },
+        { // 35
+            "biome-id":1,
+            "vertices":
+            [
+                {"x":55,"y":578},
+                {"x":number,"y":number},
+                {"x":number,"y":number},
+                {"x":55,"y":578}
+            ],
+            "city-id-list":[]
+        }
+    ]
+}
