@@ -1,4 +1,17 @@
-body
+#top-bar
 {
-	background:
+	background:pink;
+	position:absolute;
+}
+
+#side-bar
+{
+	background:blue;
+	position:absolute;
+}
+
+#viewport
+{
+	background:yellow;
+	position:absolute;
 }
