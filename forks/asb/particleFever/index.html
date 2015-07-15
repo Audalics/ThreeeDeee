@@ -40,7 +40,7 @@
 			var particlePositions;
 			var linesMesh;
 
-			var camDist = 2000;
+			var camDist = 50;
 
 			var maxParticleCount = 1000;
 			var particleCount = 500;
@@ -48,12 +48,12 @@
 			var rHalf = r / 2;
 
 			var effectController = {
-				showDots: true,
+				showDots: false,
 				showLines: true,
-				minDistance: 150,
+				minDistance: 75,
 				limitConnections: true,
-				maxConnections: 20,
-				particleCount: 500
+				maxConnections: 5,
+				particleCount: 750
 			}
 
 			var width = window.innerWidth;
@@ -65,7 +65,7 @@
 			function initGUI()
 			{
 				var top = document.getElementById("top-bar");
-				var topHeight = 10;
+				var topHeight = 20;
 				var side = document.getElementById("side-bar");
 				var sideWidth = 200;
 				var vp = document.getElementById("viewport");
@@ -152,7 +152,7 @@
 
 					particlesData.push(
 						{
-							velocity:new THREE.Vector3(-1 + Math.random() * 2, -1 + Math.random() * 2, -1 + Math.random() * 2),
+							velocity:new THREE.Vector3(-2 + Math.random() * 4, -2 + Math.random() * 4, -2 + Math.random() * 4),
 							numConnections:0
 						}
 					);
@@ -198,6 +198,7 @@
 				renderer = new THREE.WebGLRenderer({antialias:true});
 				renderer.setPixelRatio(window.devicePixelRatio);
 				renderer.setSize(vpWidth(), vpHeight());
+				renderer.setClearColor(0x345678);
 
 				renderer.gammaInput = true;
 				renderer.gammaOutput = true;
@@ -283,7 +284,7 @@
 			function render()
 			{
 				var time = Date.now() * 0.001;
-				group.rotation.y = time * 0.1;
+				group.rotation.y = time * (3 * Math.PI / 16);
 				renderer.render(scene, camera);
 			}
 

@@ -1,17 +1,17 @@
 #top-bar
 {
-	background:pink;
+	background:#567834;
 	position:absolute;
 }
 
 #side-bar
 {
-	background:blue;
+	background:#785634;
 	position:absolute;
 }
 
 #viewport
 {
-	background:yellow;
+	background:red;
 	position:absolute;
 }
