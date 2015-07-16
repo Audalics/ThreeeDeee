@@ -40,7 +40,10 @@
 			var particlePositions;
 			var linesMesh;
 
-			var camDist = 50;
+			var camDist = -1000;
+			var sDist = 0;
+
+			var sWireframe = true;
 
 			var maxParticleCount = 1000;
 			var particleCount = 500;
@@ -48,12 +51,22 @@
 			var rHalf = r / 2;
 
 			var effectController = {
-				showDots: false,
+				showDots: true,
 				showLines: true,
 				minDistance: 75,
 				limitConnections: true,
 				maxConnections: 5,
-				particleCount: 750
+				particleCount: 750,
+				scale: 4,
+				wireframe:true,
+				extrudeAmount:2,
+				bevelThickness:2,
+				bevelSize:0.5,
+				bevelSegments:3,
+				bevelEnabled:true,
+				curveSegments:12,
+				steps:1,
+				asGeom:{}
 			}
 
 			var width = window.innerWidth;
@@ -98,29 +111,62 @@
 					particles.drawcalls[ 0 ].count = particleCount;
 
 				});
+				gui.add( effectController, "scale", 0, 10 ).onChange( effectController.asGeom );
+				gui.add( effectController, "wireframe" ).onChange( function( value ) { sWireframe = value; effectController.asGeom() } );
+		        gui.add(effectController, 'extrudeAmount', 0, 800).onChange(effectController.asGeom);
+		        gui.add(effectController, 'bevelThickness', 0, 50).onChange(effectController.asGeom);
+		        gui.add(effectController, 'bevelSize', 0, 50).onChange(effectController.asGeom);
+		        gui.add(effectController, 'bevelSegments', 0, 80).step(1).onChange(effectController.asGeom);
+
+        		effectController.asGeom();
 			}
 
 			function init()
 			{
+				scene = new THREE.Scene();
+
+				var shape = createMesh(new THREE.ShapeGeometry(drawShape()));
+
+				effectController.asGeom = function()
+				{
+					scene.remove(shape);
+
+					var options =
+					{
+						amount:effectController.extrudeAmount,
+						bevelThickness:effectController.bevelThickness,
+						bevelSize:effectController.bevelSize,
+						bevelSegments:effectController.bevelSegments,
+						bevelEnbled:effectController.bevelEnabled,
+						curveSegments:effectController.curveSegments,
+						steps:effectController.steps
+					};
+
+					shape = createMesh(new THREE.ExtrudeGeometry(drawShape(), options));
+					scene.add(shape);
+				};
 				initGUI();
 
 				container = document.getElementById("viewport");
 
-				camera = new THREE.PerspectiveCamera(45, width / height, 10, 10000);
+				camera = new THREE.PerspectiveCamera(45, width / height, 10, 100000);
 				camera.position.z = camDist;
 
 				controls = new THREE.OrbitControls(camera, container);
 
-				scene = new THREE.Scene();
 
 				group = new THREE.Group();
 				scene.add(group);
 
+				//scene.add(shape);
+
+/*
 				var helper = new THREE.BoxHelper(new THREE.Mesh(new THREE.BoxGeometry(r, r, r)));
 				helper.material.color.setHex(0x080808);
 				helper.material.blending = THREE.AdditiveBlending;
 				helper.material.transparent = true;
 				group.add(helper);
+*/
 
 				var segments = maxParticleCount * maxParticleCount;
 
@@ -129,7 +175,7 @@
 
 				var pMaterial = new THREE.PointCloudMaterial(
 					{
-						color:0xffffff,
+						color:0x000000,
 						size:3,
 						blending:THREE.AdditiveBlending,
 						transparent:true,
@@ -208,6 +254,55 @@
 				window.addEventListener("resize", windowResize, false);
 			}
 
+			function createMesh(geo)
+			{
+				geo.applyMatrix(new THREE.Matrix4().makeTranslation(-20, 0, 0));
+
+				var meshMaterial = new THREE.MeshBasicMaterial(
+					{
+						color:0x006647,
+						wireframe:sWireframe,
+						transparent:false
+					}
+				);
+				console.log("wireframe:" + effectController.wireframe)
+
+				var mesh = THREE.SceneUtils.createMultiMaterialObject(geo, [meshMaterial]);
+				mesh.scale.set(effectController.scale,effectController.scale,effectController.scale)
+				return mesh;
+			}
+
+			function drawShape()
+			{
+				var shape = new THREE.Shape();
+
+				shape.moveTo(300, 0); // a
+
+				shape.lineTo(300, 100); // b
+				shape.lineTo(200, 100); // c
+				shape.lineTo(200, 75); // d
+				shape.lineTo(100, 75); // e
+				shape.lineTo(100, 125); // f
+				shape.lineTo(200, 125); // g
+				shape.lineTo(235, 125); // h
+				shape.bezierCurveTo(275, 125, 300, 150, 300, 175); // i
+				shape.lineTo(300, 225); // j
+				shape.bezierCurveTo(300, 265, 275, 300, 235, 300); // k
+				shape.lineTo(0, 300); // l
+				shape.lineTo(0, 200); // m
+				shape.lineTo(100, 200); // n
+				shape.lineTo(100, 225); // o
+				shape.lineTo(200, 225); // p
+				shape.lineTo(200, 175); // q
+				shape.lineTo(100, 175); // r
+				shape.lineTo(65, 175); // s
+				shape.bezierCurveTo(25, 175, 0, 165, 0, 125); // t
+				shape.lineTo(0, 75); // u
+				shape.bezierCurveTo(0, 35, 25, 0, 65, 0); // v
+
+				return shape;
+			}
+
 			function animate()
 			{
 				var vertexpos = 0;
@@ -284,7 +379,7 @@
 			function render()
 			{
 				var time = Date.now() * 0.001;
-				group.rotation.y = time * (3 * Math.PI / 16);
+				//group.rotation.y = time * (3 * Math.PI / 16);
 				renderer.render(scene, camera);
 			}
 
