@@ -40,28 +40,28 @@
 			var particlePositions;
 			var linesMesh;
 
-			var camDist = -1000;
+			var camDist = -2500;
 			var sDist = 0;
 
-			var sWireframe = true;
+			var sWireframe = false;
 
-			var maxParticleCount = 1000;
-			var particleCount = 500;
-			var r = 800;
+			var maxParticleCount = 1500;
+			var particleCount = 1250;
+			var r = 1500;
 			var rHalf = r / 2;
 
 			var effectController = {
 				showDots: true,
 				showLines: true,
-				minDistance: 75,
-				limitConnections: true,
-				maxConnections: 5,
-				particleCount: 750,
-				scale: 4,
-				wireframe:true,
-				extrudeAmount:2,
-				bevelThickness:2,
-				bevelSize:0.5,
+				minDistance: 150,
+				limitConnections: false,
+				maxConnections: 25,
+				particleCount: 1500,
+				scale: 5,
+				wireframe:false,
+				extrudeAmount:800,
+				bevelThickness:5,
+				bevelSize:7,
 				bevelSegments:3,
 				bevelEnabled:true,
 				curveSegments:12,
@@ -244,7 +244,7 @@
 				renderer = new THREE.WebGLRenderer({antialias:true});
 				renderer.setPixelRatio(window.devicePixelRatio);
 				renderer.setSize(vpWidth(), vpHeight());
-				renderer.setClearColor(0x345678);
+				renderer.setClearColor(0x006647);
 
 				renderer.gammaInput = true;
 				renderer.gammaOutput = true;
@@ -258,11 +258,12 @@
 			{
 				geo.applyMatrix(new THREE.Matrix4().makeTranslation(-20, 0, 0));
 
-				var meshMaterial = new THREE.MeshBasicMaterial(
+				var meshMaterial = new THREE.MeshNormalMaterial(
 					{
 						color:0x006647,
 						wireframe:sWireframe,
-						transparent:false
+						transparent:false,
+						vertexColors : THREE.VertexColors
 					}
 				);
 				console.log("wireframe:" + effectController.wireframe)
