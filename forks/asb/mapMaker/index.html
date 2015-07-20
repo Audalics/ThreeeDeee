@@ -221,8 +221,11 @@
 
                             viewport.appendChild(element);
 
+                            lookup.map.tile.add("id", element.id);
+
+                            console.log("adding element id : " + element.id)
                             lookup.tiles.add(element.id, lookup.map.copy("tile"));
-                            lookup.tiles[element.id].add("id", element.id);
+                            console.log(lookup.tiles)
                             //console.log("~!~!~!~! " + lookup.tiles[x + "//" + y])
                             //console.log("~! Success adding map tile (x:" + x + "//y:" + y + ")")
                         }
@@ -300,32 +303,52 @@
                 //console.log(lookup.tiles[selectedTile.id]);
 
                 var tile = lookup.tiles[selectedTile.id];
+                console.log("TILETILETILETILE: "+tile.id())
 
                 lookup.menu.inhabitants.push(
                 {
+                    term:"ID",
+                    readonly:true,
+                    value:tile.id()
+                });
+                lookup.menu.inhabitants.push(
+                {
                     term:"R",
+                    readonly:false,
                     value:tile.colorObj.r()
                 });
                 lookup.menu.inhabitants.push(
                 {
                     term:"G",
+                    readonly:false,
                     value:tile.colorObj.g()
                 });
                 lookup.menu.inhabitants.push(
                 {
                     term:"B",
+                    readonly:false,
                     value:tile.colorObj.b()
                 });
 
                 for(var i = 0; i < lookup.menu.inhabitants.length; i++)
                 {
+                    console.log("LENGTHLEEEENGTH " + lookup.menu.inhabitants.length)
                     var element = document.createElement("input");
                     element.type = "text";
                     element.className = lookup.menu.inhabitant.class();
                     element.id = lookup.menu.inhabitant.idPrefix() + lookup.menu.inhabitants[i].term + lookup.menu.inhabitant.idSuffix();
                     element.placeholder = lookup.menu.inhabitants[i].term;
                     element.value = lookup.menu.inhabitants[i].value;
-                    element.class = lookup.menu.inhabitant.class();
+
+                    if(lookup.menu.inhabitants[i].readonly)
+                    {
+                        element.readonly = true;
+                    }
+                    else
+                    {
+                        element.readonly = false;
+                    }
+
                     lookup.menu.domElement().appendChild(element);
 
                     lookup.menu.idDump.push(element.id);
@@ -537,6 +560,9 @@
                         {
                             case HTMLDivElement:
                                 self[term] = function(){return value};
+                                break;
+                            case Array:
+                                self[term] = value;
                                 break;
                             default:
                                 self[term] = value;
