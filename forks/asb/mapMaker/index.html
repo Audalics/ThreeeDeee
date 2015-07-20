@@ -1,0 +1,668 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <div id="info">
+            <input type="number" id="mapWidth" placeholder="Width" min="10" max="100" />
+            <input type="number" id="mapHeight" placeholder="Height" min="7" max="75" />
+            <input type="button" id="submitInfo" value="New Map" onclick="Main()" />
+        </div>
+    </body>
+    <script type="text/javascript">
+        function Main()
+        {
+            initLookup();
+            if(gatherInfo())
+            {
+                initGUI();
+                initMouse();
+                initEventListeners();
+            }
+            else
+            {
+                location.reload();
+            }
+        }
+
+        //
+        //
+        //
+
+        function forEachTile(callback)
+        {
+            var tiles = document.getElementsByClassName(lookup.map.tile.class());
+            //console.log("class:" + lookup.map.tile.class() + "//tileCount:" + tiles.length)
+
+            for(var i = 0; i < tiles.length; i++)
+            {
+                //console.log(callback);
+                callback(tiles[i]);
+            }
+        }
+
+        function gatherInfo()
+        {
+            var infoBox = document.getElementById("info");
+
+            var mapWidthBox = document.getElementById("mapWidth");
+            var mapHeightBox = document.getElementById("mapHeight");
+            var submitInfoButton = document.getElementById("submitInfo");
+
+
+            var mapWidth = mapWidthBox.value
+            var mapHeight = mapHeightBox.value
+            //console.log("w:" + mapWidth + "//h:" + mapHeight)
+
+            if(!mapWidth || !mapHeight)
+            {
+                console.log("!~ Error gathering info: mapWidth or mapHeight invalid");
+                return false;
+            }
+            else
+            {
+                lookup.add("map", {});
+                lookup.map.add("width", mapWidth);
+                lookup.map.add("height", mapHeight);
+                console.log("~! Success gathering info");
+            }
+
+            mapWidthBox.parentNode.removeChild(mapWidthBox);
+            mapHeightBox.parentNode.removeChild(mapHeightBox);
+            submitInfoButton.parentNode.removeChild(submitInfoButton);
+
+            infoBox.parentNode.removeChild(infoBox);
+            return true;
+        }
+
+        function initEventListeners()
+        {
+            lookup.add("eventFunction", {});
+            lookup.eventFunction.add("windowResize", function(){resizeGUI()});
+            lookup.eventFunction.add("tileMouseDown", function(event)
+            {
+                var xMouse = event.clientX;
+                var yMouse = event.clientY;
+
+                lookup.mouse.update(xMouse, yMouse, true, event.which);
+            });
+            lookup.eventFunction.add("tileMouseMove", function(event)
+            {
+                var xMouse = event.clientX;
+                var yMouse = event.clientY;
+
+                lookup.mouse.update(xMouse, yMouse, true, event.which);
+            });
+            lookup.eventFunction.add("tileMouseUp", function(event)
+            {
+                var xMouse = event.clientX;
+                var yMouse = event.clientY;
+
+                lookup.mouse.update(xMouse, yMouse, false);
+                lookup.mouse.selectTile(event.target);
+            });
+
+            window.addEventListener("windowResize", lookup.eventFunction.resize);
+
+            forEachTile(function(tile)
+            {
+                tile.addEventListener("mousedown", lookup.eventFunction.tileMouseDown);
+                tile.addEventListener("mousemouse", lookup.eventFunction.tileMouseMove);
+                tile.addEventListener("mouseup", lookup.eventFunction.tileMouseUp);
+            });
+        }
+
+        function initGUI()
+        {
+            initTopBar();
+            initMenu();
+            initViewport();
+
+            initMap();
+
+        }
+
+        function initLookup()
+        {
+            window.lookup = new Lookup();
+
+            lookup.add("screen", {});
+            lookup.screen.add("width", function(){return window.innerWidth});
+            lookup.screen.add("height", function(){return window.innerHeight});
+
+            lookup.add("color", {});
+            lookup.color.add("grey", "rgb(128, 128, 128)");
+            lookup.color.add("hotPink", "rgb(255, 64, 128)");
+            lookup.color.add("orange", "rgb(255, 128, 64)");
+            lookup.color.add("black", "rgb(0, 0, 0)");
+            lookup.color.add("white", "rgb(255, 255, 255)");
+            lookup.color.add("red", "rgb(255, 0, 0)");
+            lookup.color.add("blue", "rgb(0, 0, 255)");
+            lookup.color.add("green", "rgb(0, 255, 0)");
+        }
+
+        function initMap()
+        {
+            lookup.map.add("tile", {});
+
+            lookup.map.tile.add("class", "_MAP_TILE_");
+
+            lookup.map.tile.add("idPrefix", "_MAP_TILE_");
+            lookup.map.tile.add("idSuffix", "_");
+
+            lookup.map.tile.add("width", function()
+            {
+                return lookup.viewport.width() / lookup.map.width();
+            });
+            lookup.map.tile.add("height", function()
+            {
+                return lookup.viewport.height() / lookup.map.height();
+            });
+
+            lookup.map.tile.add("colorObj", {});
+            lookup.map.tile.colorObj.add("r", 128);
+            lookup.map.tile.colorObj.add("g", 32);
+            lookup.map.tile.colorObj.add("b", 64);
+
+            lookup.map.tile.add("color", function()
+            {
+                return "rgb(" + lookup.map.tile.colorObj.r() + ", " + lookup.map.tile.colorObj.g() + ", " + lookup.map.tile.colorObj.b() + ")";
+            });
+
+            lookup.map.tile.add("colorDefault", "rgb(123, 24, 64)");
+
+            lookup.map.tile.add("outlineObj", {});
+            lookup.map.tile.outlineObj.add("size", "1px");
+            lookup.map.tile.outlineObj.add("color", lookup.color.black());
+            lookup.map.tile.outlineObj.add("style", "solid");
+
+            lookup.map.tile.add("outline", function()
+            {
+                return lookup.map.tile.outlineObj.size() + " " + lookup.map.tile.outlineObj.color() + " " + lookup.map.tile.outlineObj.style();
+            });
+
+            lookup.map.add("resize", function()
+            {
+                var resize = function(tile)
+                {
+                    tile.style.width = lookup.map.tile.width();
+                    tile.style.height = lookup.map.tile.height();
+                    //console.log("~!~! width:" + lookup.map.tile.width() + "//height:" + lookup.map.tile.height())
+                };
+                forEachTile(resize);
+            });
+
+            if(lookup.viewport)
+            {
+                var viewport = lookup.viewport.domElement();
+                if(lookup.map)
+                {
+                    lookup.add("tiles", {});
+
+                    var w = lookup.map.width();
+                    var h = lookup.map.height();
+
+                    for(var y = 0; y < h; y++)
+                    {
+                        for(var x = 0; x < w; x++)
+                        {
+                            var element = document.createElement("div");
+                            element.className = lookup.map.tile.class();
+                            element.id = lookup.map.tile.idPrefix() + x + "//" + y + lookup.map.tile.idSuffix();
+                            element.style.position = "relative";
+                            element.style.width = lookup.map.tile.width();
+                            element.style.height = lookup.map.tile.height();
+                            if(lookup.map.tile.colorObj.r == null || lookup.map.tile.colorObj.g == null || lookup.map.tile.colorObj.b == null)
+                                element.style.background = lookup.map.tile.colorDefault();
+                            else
+                                element.style.background = lookup.map.tile.color();
+                            element.style.outline = lookup.map.tile.outline();
+                            element.style.float = "left";
+
+                            viewport.appendChild(element);
+
+                            lookup.tiles.add(element.id, lookup.map.copy("tile"));
+                            lookup.tiles[element.id].add("id", element.id);
+                            //console.log("~!~!~!~! " + lookup.tiles[x + "//" + y])
+                            //console.log("~! Success adding map tile (x:" + x + "//y:" + y + ")")
+                        }
+                        var breakElement = document.createElement("br");
+                        viewport.appendChild(breakElement);
+                    }
+                }
+                else
+                {
+                    console.log("!~ Error on map init: map data invalid");
+                }
+            }
+            else
+            {
+                console.log("!~ Error on map init: viewport invalid (type:" + typeof(viewport) + ")");
+            }
+        }
+
+        function initMenu()
+        {
+            lookup.add("menu", {});
+            lookup.menu.add("id", "_MENU_DOM_");
+            lookup.menu.add("width", 150);
+            lookup.menu.add("height", function()
+            {
+                return lookup.screen.height() - lookup.topBar.height();
+            });
+            lookup.menu.add("color", lookup.color.hotPink());
+
+            var element = document.createElement("div");
+            element.id = lookup.menu.id();
+            element.style.position = "absolute";
+            element.style.top = lookup.topBar.height();
+            element.style.left = 0;
+            element.style.width = lookup.menu.width();
+            element.style.height = lookup.menu.height();
+            element.style.background = lookup.menu.color();
+
+            lookup.menu.add("domElement", element);
+
+            document.body.appendChild(element);
+
+            lookup.menu.add("resize", function()
+            {
+                lookup.menu.change("height", lookup.screen.height() - lookup.topBar.height());
+                lookup.menu.domElement().style.height = lookup.menu.height();
+            });
+            lookup.menu.add("inhabitant", {});
+            lookup.menu.inhabitant.add("class", "_MENU_INHABITANT_");
+            lookup.menu.inhabitant.add("idPrefix", "_MENU_INHABITANT_");
+            lookup.menu.inhabitant.add("idSuffix", "_");
+            lookup.menu.add("inhabitants", []);
+
+            lookup.menu.add("clear", function()
+            {
+                //console.log(lookup.menu.idDump.length)
+                for(var i = 0; i < lookup.menu.idDump.length; i++)
+                {
+                    //console.log(i + " - " + lookup.menu.idDump[i])
+                    var element = document.getElementById(lookup.menu.idDump[i]);
+                    element.parentNode.removeChild(element);
+                    lookup.menu.inhabitants.splice(lookup.menu.idDump[i], 1);
+                    lookup.menu.idDump.splice(i, 1);
+                    i--;
+                }
+                //console.log(lookup.menu.idDump.length)
+            });
+
+            lookup.menu.add("idDump", []);
+
+            lookup.menu.add("populate", function(selectedTile)
+            {
+                lookup.menu.clear();
+
+                //console.log(lookup.tiles[selectedTile.id]);
+
+                var tile = lookup.tiles[selectedTile.id];
+
+                lookup.menu.inhabitants.push(
+                {
+                    term:"R",
+                    value:tile.colorObj.r()
+                });
+                lookup.menu.inhabitants.push(
+                {
+                    term:"G",
+                    value:tile.colorObj.g()
+                });
+                lookup.menu.inhabitants.push(
+                {
+                    term:"B",
+                    value:tile.colorObj.b()
+                });
+
+                for(var i = 0; i < lookup.menu.inhabitants.length; i++)
+                {
+                    var element = document.createElement("input");
+                    element.type = "text";
+                    element.className = lookup.menu.inhabitant.class();
+                    element.id = lookup.menu.inhabitant.idPrefix() + lookup.menu.inhabitants[i].term + lookup.menu.inhabitant.idSuffix();
+                    element.placeholder = lookup.menu.inhabitants[i].term;
+                    element.value = lookup.menu.inhabitants[i].value;
+                    element.class = lookup.menu.inhabitant.class();
+                    lookup.menu.domElement().appendChild(element);
+
+                    lookup.menu.idDump.push(element.id);
+                }
+            });
+        }
+
+        function initMouse()
+        {
+            lookup.add("mouse", {});
+            lookup.mouse.add("button", null);
+            lookup.mouse.add("xFresh", null);
+            lookup.mouse.add("yFresh", null);
+            lookup.mouse.add("xOld", null);
+            lookup.mouse.add("yOld", null);
+            lookup.mouse.add("lastEvent", null);
+            lookup.mouse.add("isDown", false);
+            lookup.mouse.add("isDragging", false);
+            lookup.mouse.add("isLongPressing", false);
+            lookup.mouse.add("isLongPressDragging", false);
+
+            lookup.mouse.add("dragThreshold", 3); // px
+            lookup.mouse.add("longPressThreshold", 1000) // ms
+
+            lookup.mouse.add("timeDown", null);
+            lookup.mouse.add("updateInterval", null);
+            lookup.mouse.add("updateIntervalMS", 100);
+
+            lookup.mouse.add("selectTile", function(target)
+            {
+                lookup.mouse.change("selectedTile", target);
+                lookup.menu.populate(target);
+            });
+
+            lookup.mouse.add("update", function(xNew, yNew, isDown, button)
+            {
+                /* for better drag work
+
+                if(lookup.mouse.updateInterval == null)
+                {
+                    lookup.mouse.change("updateInterval", setInterval(function(){lookup.mouse.()}))
+                }
+
+                */
+                var timeMS = Date.now();
+
+                lookup.mouse.change("xOld", lookup.mouse.xFresh());
+                lookup.mouse.change("yOld", lookup.mouse.yFresh());
+                lookup.mouse.change("xFresh", xNew);
+                lookup.mouse.change("yFresh", yNew);
+
+                if(isDown)
+                { // Check if event is mouse down
+                    if(lookup.mouse.isLongPressing())
+                    { // Check for long press before other mouse stuff
+                        if(Math.abs(lookup.mouse.xFresh()) - Math.abs(lookup.mouse.xOld()) > lookup.mouse.dragThreshold())
+                        { // User is long press dragging
+                            lookup.mouse.change("isLongPressDragging", true);
+                            console.log("~! Mouse Event: long press drag start")
+                        }
+                        else
+                        { // Long press click
+
+                        }
+                    }
+                    else if(lookup.mouse.isDown())
+                    { // Check is mouse already down
+                        if(Math.abs(lookup.mouse.xFresh()) - Math.abs(lookup.mouse.xOld()) > lookup.mouse.dragThreshold())
+                        { // User is dragging
+                            lookup.mouse.change("isDragging", true)
+                            console.log("~! Mouse Event: normal drag start")
+                        }
+                        else
+                        { // User might be long pressing
+                            if(timeMS - lookup.mouse.timeDown() > lookup.mouse.longPressThreshold())
+                            {
+                                lookup.mouse.change("isLongPressing", true)
+                                console.log("~! Mouse Event: long press click")
+                            }
+                        }
+                    }
+                    else
+                    { // User just clicked
+                        lookup.mouse.change("isDown", true);
+                        lookup.mouse.change("timeDown", timeMS);
+                        console.log("~! Mouse Event: click start")
+                    }
+                }
+                else
+                { // Event is mouse up
+                    lookup.mouse.change("isDown", false)
+                    if(lookup.mouse.isDragging())
+                        lookup.mouse.change("isDragging", false);
+                    if(lookup.mouse.isLongPressing())
+                        lookup.mouse.change("isLongPressing", false);
+                    if(lookup.mouse.isLongPressDragging())
+                        lookup.mouse.change("isLongPressDragging", false);
+
+                    //console.log("~!~! Mouse down time:" + (timeMS - lookup.mouse.timeDown()))
+                    lookup.mouse.change("timeDown", null);
+                }
+            });
+        }
+
+        function initTopBar()
+        {
+            lookup.add("topBar", {});
+            lookup.topBar.add("id", "_TOP_BAR_DOM_");
+            lookup.topBar.add("width", function()
+            {
+                return lookup.screen.width();
+            });
+            lookup.topBar.add("height", 25);
+            lookup.topBar.add("color", lookup.color.grey());
+
+            var element = document.createElement("div");
+            element.id = lookup.topBar.id();
+            element.style.position = "absolute";
+            element.style.top = 0;
+            element.style.left = 0;
+            element.style.width = lookup.topBar.width();
+            element.style.height = lookup.topBar.height();
+            element.style.background = lookup.topBar.color();
+
+            lookup.topBar.add("domElement", element);
+
+            document.body.appendChild(element);
+
+            lookup.topBar.add("resize", function()
+            {
+                lookup.topBar.domElement().style.width = lookup.topBar.width();
+                lookup.topBar.domElement().style.height = lookup.topBar.height();
+            });
+        }
+
+        function initViewport()
+        {
+            lookup.add("viewport", {});
+            lookup.viewport.add("id", "_VIEWPORT_DOM_");
+            lookup.viewport.add("width", function()
+            {
+                return lookup.screen.width() - lookup.menu.width();
+            });
+            lookup.viewport.add("height", function()
+            {
+                return lookup.screen.height() - lookup.topBar.height();
+            });
+            lookup.viewport.add("color", lookup.color.orange());
+
+            var element = document.createElement("div");
+            element.id = lookup.viewport.id();
+            element.style.position = "absolute";
+            element.style.top = lookup.topBar.height();
+            element.style.left = lookup.menu.width();
+            element.style.width = lookup.viewport.width();
+            element.style.height = lookup.viewport.height();
+            element.style.background = lookup.viewport.color();
+
+            lookup.viewport.add("domElement", element);
+
+            document.body.appendChild(element);
+
+            lookup.viewport.add("resize", function()
+            {
+                lookup.viewport.domElement().style.width = lookup.viewport.width();
+                lookup.viewport.domElement().style.height = lookup.viewport.height();
+                lookup.map.resize();
+            });
+        }
+
+        function resizeGUI()
+        {
+            var topBar = lookup.topBar;
+            var menu = lookup.menu;
+            var viewport = lookup.viewport;
+
+            topBar.resize();
+            menu.resize();
+            viewport.resize();
+        }
+    </script>
+
+    <script type="text/javascript">
+        function Lookup()
+        {
+
+        }
+
+        Lookup.prototype.add = function(term, value)
+        {
+            console.log("~! Lookup adding: " + term + ": " + value)
+            var self = this;
+            switch(typeof(value))
+            {
+                case "function":
+                    self[term] = value;
+                    break;
+                case "object":
+                    if(value === null)
+                    {
+                        self[term] = function()
+                        {
+                            return null; // null are intentionally blank
+                        }
+                    }
+                    else
+                    {
+                        switch(value.constructor)
+                        {
+                            case HTMLDivElement:
+                                self[term] = function(){return value};
+                                break;
+                            default:
+                                self[term] = value;
+                                self[term].add = Lookup.prototype.add;
+                                self[term].delete = Lookup.prototype.delete;
+                                self[term].has = Lookup.prototype.has;
+                                self[term].change = Lookup.prototype.change;
+                                self[term].copy = Lookup.prototype.copy;
+                                break;
+                        }
+                    }
+                    break;
+                case "number":
+                    self[term] = function()
+                    {
+                        return value;
+                    }
+                    break;
+                case "string":
+                    self[term] = function()
+                    {
+                        return value;
+                    }
+                    break;
+                case "boolean":
+                    self[term] = function()
+                    {
+                        return value;
+                    }
+                    break;
+                case "undefined":
+                    console.log("!~ Error adding lookup: (term:" + term + "//value:" + value + ") not accepted");
+                    break;
+                default:
+                    console.log("!~ Error adding lookup: (type:" + typeof(value) + ") not accounted for")
+                    break;
+            }
+
+            return self.has(term);
+        }
+
+        Lookup.prototype.delete = function(term)
+        {
+            var self = this;
+            if(self.has(term))
+            {
+                self[term] = undefined;
+            }
+
+            return !self.has(term);
+        }
+
+        Lookup.prototype.has = function(term)
+        {
+            var self = this;
+
+            return self[term] != undefined;
+        }
+
+        Lookup.prototype.change = function(term, newValue)
+        {
+            console.log("~! Lookup changing: " + term + ":" + newValue)
+            var self = this;
+            switch(typeof(newValue))
+            {
+                case "function":
+                    self[term] = newValue;
+                    break;
+                case "object":
+                    if(newValue === null)
+                    {
+                        self[term] = null; // null are intentionally blank
+                    }
+                    else
+                    {
+                        switch(newValue.constructor)
+                        {
+                            case HTMLDivElement:
+                                self[term] = function(){return newValue};
+                                break;
+                            default:
+                                self[term] = newValue;
+                                self[term].add = Lookup.prototype.add;
+                                self[term].delete = Lookup.prototype.delete;
+                                self[term].has = Lookup.prototype.has;
+                                self[term].change = Lookup.prototype.change;
+                                self[term].copy = Lookup.prototype.copy;
+                                break;
+                        }
+                    }
+                    break;
+                case "number":
+                    self[term] = function()
+                    {
+                        return newValue;
+                    }
+                    break;
+                case "string":
+                    self[term] = function()
+                    {
+                        return newValue;
+                    }
+                    break;
+                case "boolean":
+                    self[term] = function()
+                    {
+                        return newValue;
+                    }
+                    break;
+                case "undefined":
+                    console.log("!~ Error adding lookup: (term:" + term + "//value:" + newValue + ") not accepted");
+                    break;
+                default:
+                    console.log("!~ Error adding lookup: (type:" + typeof(newValue) + ") not accounted for")
+                    break;
+            }
+
+            return self.has(term);
+        }
+
+        Lookup.prototype.copy = function(term)
+        {
+            var self = this;
+            var newSelf = self[term];
+            //console.log("\n\n\n\n~@~@~@ newSelf:" + newSelf)
+            return newSelf;
+        }
+    </script>
+</html>
