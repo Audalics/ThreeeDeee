@@ -1,11 +1,12 @@
 <html>
     <head>
-
+        <link rel="stylesheet" type="text/css" href="dhtmlxslider.css" />
+        <script type="text/javascript" src="dhtmlxslider.js"></script>
     </head>
     <body>
         <div id="info">
-            <input type="number" id="mapWidth" placeholder="Width" min="25" max="25" />
-            <input type="number" id="mapHeight" placeholder="Height" min="10" max="10" />
+            <input type="number" id="mapWidth" placeholder="Width" min="25" max="75" step="25" />
+            <input type="number" id="mapHeight" placeholder="Height" min="10" max="30" step="10" />
             <input type="button" id="submitInfo" value="New Map" onclick="Main()" />
         </div>
     </body>
@@ -18,11 +19,6 @@
                 initGUI();
                 initMouse();
                 initEventListeners();
-
-                for(var i = 0; i < lookup.tileInfo.length; i++)
-                {
-                    console.log("\n\n(" + i + ") - " + lookup.tileInfo[i].id())
-                }
             }
             else
             {
@@ -87,8 +83,8 @@
             {
                 for(var i = 0; i < tileInfo.length; i++)
                 {
-                    console.log("~~~(" + id + ") =?= (" + tileInfo[i].id() + ")~~~");
-                    if(id === tileInfo[i].id())
+                    //console.log("~~~(" + id + ") =?= (" + tileInfo[i].domElement().id + ")~~~");
+                    if(id === tileInfo[i].domElement().id)
                         return tileInfo[i];
                 }
             }
@@ -216,9 +212,13 @@
             // random color function
             var getRandomRGB = function()
             {
-                var colorStr = "RGB(" + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
-                console.log("~!~!~! COLOR STR: " + colorStr)
-                return colorStr;
+                var color =
+                {
+                    r:Math.floor(Math.random() * 255),
+                    g:Math.floor(Math.random() * 255),
+                    b:Math.floor(Math.random() * 255)
+                };
+                return color;
             };
 
 
@@ -237,56 +237,66 @@
                     {
                         for(var x = 0; x < w; x++)
                         {
+
+                        console.log("tile color default: " + lookup.map.tile.color())
+                            var currentTile = lookup.map.copy("tile");
+
+                            var rgb = {};
+
                             var id = lookup.map.tile.idPrefix() + x + "//" + y + lookup.map.tile.idSuffix();
+
                             var element = document.createElement("div");
-                            element.className = lookup.map.tile.class();
+
+                            element.className = currentTile.class();
                             element.id = id;
                             element.style.position = "relative";
-                            element.style.width = lookup.map.tile.width();
-                            element.style.height = lookup.map.tile.height();
-                            if(lookup.map.tile.colorObj.r() == null || lookup.map.tile.colorObj.g() == null || lookup.map.tile.colorObj.b() == null)
+                            element.style.width = currentTile.width();
+                            element.style.height = currentTile.height();
+
+                            console.log("CCURENT R: " + currentTile.colorObj.r())
+                            if(currentTile.colorObj.r() != null
+                            && currentTile.colorObj.g() != null
+                            && currentTile.colorObj.b() != null)
                             {
-                                //element.style.background = lookup.map.tile.colorDefault();
-                                element.style.background = getRandomRGB();
+                                rgb =
+                                {
+                                    r:currentTile.colorObj.r(),
+                                    g:currentTile.colorObj.g(),
+                                    b:currentTile.colorObj.b()
+                                };
                             }
                             else
                             {
-                                element.style.background = lookup.map.tile.color();
+                                //element.style.background = currentTile.colorDefault();
+                                rgb = getRandomRGB();
+
+                                console.log("CURRENT TILE RGB: " + rgb)
+
+                                currentTile.colorObj.change("r", rgb.r);
+                                currentTile.colorObj.change("g", rgb.g);
+                                currentTile.colorObj.change("b", rgb.b);
                             }
-                            element.style.outline = lookup.map.tile.outline();
+                            element.style.background = "RGB(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")";
+                            element.style.outline = currentTile.outline();
                             element.style.float = "left";
 
                             viewport.appendChild(element);
 
-                            var currentTile = lookup.map.copy("tile");
-
-
-                            console.log("THIS FUCKING ID " + id);
-                            if(currentTile.has("id"))
-                            {
-                                console.log("changing id from " + currentTile.id() + " to " + id)
-                                currentTile.change("id", id);
-                                console.log("changed id to " + currentTile.id())
-                            }
-                            else
-                            {
-                                console.log("adding id")
-                                currentTile.add("id", id);
-                            }
                             if(currentTile.has("domElement"))
                             {
-                                console.log("changing element from id:" + currentTile.domElement().id + " to " + id)
+                                //console.log("changing element from id:" + currentTile.domElement().id + " to " + id)
                                 currentTile.change("domElement", element);
-                                console.log("changed element to id:" + currentTile.domElement().id)
+                                //console.log("changed element to id:" + currentTile.domElement().id)
                             }
                             else
                             {
-                                console.log("adding element")
                                 currentTile.add("domElement", element);
+                                //console.log("added element id:" + currentTile.domElement().id)
                             }
+
                             //console.log("adding element id : " + currentTile.id());
 
-                            console.log("~!~! Current tile: " + currentTile.colorObj.r())
+                            //console.log("~!~! Current tile: " + currentTile.colorObj.r())
                             lookup.tileInfo.push(currentTile);
                             //console.log("~! Success adding map tile (x:" + x + "//y:" + y + ")")
                         }
@@ -360,37 +370,33 @@
             lookup.menu.add("populate", function(selectedTile)
             {
                 lookup.menu.clear();
-                console.log(selectedTile.id)
-                var tileInfo = getTileInfoById(selectedTile.id);
-                console.log("TILETILEINFO: " + tileInfo)
                 lookup.menu.inhabitants.push(
                 {
                     term:"ID",
                     readonly:true,
-                    value:tileInfo.id()
+                    value:selectedTile.domElement().id
                 });
                 lookup.menu.inhabitants.push(
                 {
                     term:"R",
                     readonly:false,
-                    value:tileInfo.colorObj.r()
+                    value:selectedTile.colorObj.r()
                 });
                 lookup.menu.inhabitants.push(
                 {
                     term:"G",
                     readonly:false,
-                    value:tileInfo.colorObj.g()
+                    value:selectedTile.colorObj.g()
                 });
                 lookup.menu.inhabitants.push(
                 {
                     term:"B",
                     readonly:false,
-                    value:tileInfo.colorObj.b()
+                    value:selectedTile.colorObj.b()
                 });
 
                 for(var i = 0; i < lookup.menu.inhabitants.length; i++)
                 {
-                    console.log("LENGTHLEEEENGTH " + lookup.menu.inhabitants.length)
                     var element = document.createElement("input");
                     element.type = "text";
                     element.className = lookup.menu.inhabitant.class();
@@ -438,7 +444,7 @@
             lookup.mouse.add("selectTile", function(target)
             {
                 lookup.mouse.change("selectedTile", target);
-                lookup.menu.populate(target);
+                lookup.menu.populate(getTileInfoById(target.id));
             });
 
             lookup.mouse.add("update", function(xNew, yNew, isDown, button)
@@ -623,7 +629,7 @@
                                 self[term] = value;
                                 self[term].push = function(item)
                                 {
-                                    console.log("Pushing to " + term + "[" + self[term].length + "]")
+                                    console.log("~! Lookup pushing to " + term + "[" + self[term].length + "]")
                                     self[term][self[term].length] = item;
                                 }
                                 break;
@@ -749,9 +755,22 @@
         Lookup.prototype.copy = function(term)
         {
             var self = this;
-            var newSelf = self[term];
-            //console.log("\n\n\n\n~@~@~@ newSelf:" + newSelf)
-            return newSelf;
+
+            var termCopy = {};
+
+            for(var attr in self[term])
+            {
+                console.log("SELF TERM TYPE: " + typeof(self[term][attr]))
+                if(typeof(self[term][attr]) == "object")
+                {
+                    termCopy[attr] = self[term].copy(attr);
+                }
+                else
+                {
+                    termCopy[attr] = self[term][attr];
+                }
+            }
+            return termCopy;
         }
     </script>
 </html>
