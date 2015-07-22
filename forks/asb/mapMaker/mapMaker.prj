@@ -1,0 +1,16 @@
+[Project ID]
+	Signature=UE Proj: v.1
+[Project Information]
+	Use Relative Directory=1
+	Relative to Project File=1
+	Project Directory=C:\Users\asb1008\Documents\GitHub\ThreeeDeee\forks\asb\mapMaker
+	Include Sub Directories=1
+	Project Tagfile=
+	Project Wordfile=
+	Project TpFile=
+	Filter=
+	Create Tagfile=0
+[Files]
+	0=dhtmlxslider.css
+	1=dhtmlxslider.js
+	2=index.html

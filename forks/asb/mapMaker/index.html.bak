@@ -620,7 +620,7 @@
                             var slider = new dhtmlXSlider(options);
                             slider.setSkin(skin);
                             slider.attachEvent("onChange", onChangeFunc);
-                            //slider.setItemToolTipTemplate(id, "R");
+                            slider.setItemToolTipTemplate(id, "R");
                             //slider.linkTo(idBoxId);
                             break;
                     }
