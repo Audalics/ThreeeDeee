@@ -159,8 +159,22 @@
 
         function initMap()
         {
+            // Event listener function
+            lookup.map.add("resize", function()
+            {
+                var resize = function(tile)
+                {
+                    tile.style.width = lookup.map.tile.width();
+                    tile.style.height = lookup.map.tile.height();
+                    //console.log("~!~! width:" + lookup.map.tile.width() + "//height:" + lookup.map.tile.height())
+                };
+                forEachTile(resize);
+            });
+
+
             lookup.map.add("tile", {});
 
+            // Map Tile event functions, attributes, methods
             lookup.map.tile.add("class", "_MAP_TILE_");
 
             lookup.map.tile.add("idPrefix", "_MAP_TILE_");
@@ -175,17 +189,86 @@
                 return lookup.viewport.height() / lookup.map.height();
             });
 
-            lookup.map.tile.add("colorObj", {});
-            lookup.map.tile.colorObj.add("r", null);
-            lookup.map.tile.colorObj.add("g", null);
-            lookup.map.tile.colorObj.add("b", null);
+            // Tile default color info (null gives random color)
+            lookup.map.tile.add("colorInfo", {});
+            lookup.map.tile.colorInfo.add("r", null);
+            lookup.map.tile.colorInfo.add("g", null);
+            lookup.map.tile.colorInfo.add("b", null);
 
+            // Tile color getter
             lookup.map.tile.add("color", function()
             {
-                return "rgb(" + lookup.map.tile.colorObj.r() + ", " + lookup.map.tile.colorObj.g() + ", " + lookup.map.tile.colorObj.b() + ")";
+                return "rgb(" + lookup.map.tile.colorInfo.r() + ", " + lookup.map.tile.colorInfo.g() + ", " + lookup.map.tile.colorInfo.b() + ")";
             });
 
-            lookup.map.tile.add("colorDefault", "rgb(255, 255, 255)");
+            // Tile color setter
+            lookup.map.tile.add("setColor", function(object)
+            {
+                var self = this;
+                console.log("OOOHHH SHIT MORTY: " + self.color())
+
+                if(object.r == null && object.g == null && object.b == null)
+                {
+                    self.colorInfo.change("r", null);
+                    self.colorInfo.change("g", null);
+                    self.colorInfo.change("b", null);
+                }
+                else
+                {
+                    if(object.r == null)
+                        object.r = getRandomInteger(0, 255);
+                    if(object.g == null)
+                        object.g = getRandomInteger(0, 255);
+                    if(object.b == null)
+                        object.b = getRandomInteger(0, 255);
+                }
+
+                if(object.r && object.g && object.b)
+                {
+                    //console.log("\n\n\n\n\n\n\n\n\n\n~!~!~!~! SETTING COLOR OF TILE (COLOuR:" + object.r + ", " + object.g + ", " + object.b + ")")
+                    self.colorInfo.change("r", object.r);
+                    self.colorInfo.change("g", object.g);
+                    self.colorInfo.change("b", object.b);
+                }
+                else
+                {
+                    console.log("!~!~ Error setting color of tile (ID:" +  self.tile.domElement().id + ")//REASON:BAD_OBJECT (REFERENCE:" + object + ")");
+                }
+            });
+
+            lookup.map.tile.add("setR", function(r)
+            {
+                var self = this;
+                if(r)
+                {
+                    console.log("!~!~!~ changing r")
+                    self.colorInfo.change("r", r);
+                }
+            });
+
+            lookup.map.tile.add("setG", function(g)
+            {
+                if(g)
+                {
+                    self.colorInfo.change("g", g);
+                }
+            });
+
+            lookup.map.tile.add("setB", function(b)
+            {
+                if(b)
+                {
+                    self.colorInfo.change("b", b);
+                }
+            });
+
+        //    lookup.map.tile.setColor({r:255,g:255,b:255}); // set default tile color to white
+
+            // Tile force update method
+            lookup.map.tile.add("update", function()
+            {
+
+            });
 
             lookup.map.tile.add("outlineObj", {});
             lookup.map.tile.outlineObj.add("size", "1px");
@@ -197,20 +280,14 @@
                 return lookup.map.tile.outlineObj.size() + " " + lookup.map.tile.outlineObj.color() + " " + lookup.map.tile.outlineObj.style();
             });
 
-            lookup.map.add("resize", function()
+            function getRandomInteger(min, max)
             {
-                var resize = function(tile)
-                {
-                    tile.style.width = lookup.map.tile.width();
-                    tile.style.height = lookup.map.tile.height();
-                    //console.log("~!~! width:" + lookup.map.tile.width() + "//height:" + lookup.map.tile.height())
-                };
-                forEachTile(resize);
-            });
+                return Math.floor((Math.random() * (max - min)) + min);
+            }
 
 
             // random color function
-            var getRandomRGB = function()
+            function getRandomRGB()
             {
                 var color =
                 {
@@ -238,7 +315,7 @@
                         for(var x = 0; x < w; x++)
                         {
 
-                        console.log("tile color default: " + lookup.map.tile.color())
+                        //console.log("tile color default: " + lookup.map.tile.color())
                             var currentTile = lookup.map.copy("tile");
 
                             var rgb = {};
@@ -253,28 +330,27 @@
                             element.style.width = currentTile.width();
                             element.style.height = currentTile.height();
 
-                            console.log("CCURENT R: " + currentTile.colorObj.r())
-                            if(currentTile.colorObj.r() != null
-                            && currentTile.colorObj.g() != null
-                            && currentTile.colorObj.b() != null)
+                            //console.log("CCURENT R: " + currentTile.colorInfo.r())
+                            if(currentTile.colorInfo.r() != null
+                            && currentTile.colorInfo.g() != null
+                            && currentTile.colorInfo.b() != null)
                             {
                                 rgb =
                                 {
-                                    r:currentTile.colorObj.r(),
-                                    g:currentTile.colorObj.g(),
-                                    b:currentTile.colorObj.b()
+                                    r:currentTile.colorInfo.r(),
+                                    g:currentTile.colorInfo.g(),
+                                    b:currentTile.colorInfo.b()
                                 };
                             }
                             else
                             {
-                                //element.style.background = currentTile.colorDefault();
                                 rgb = getRandomRGB();
 
-                                console.log("CURRENT TILE RGB: " + rgb)
+                                //console.log("CURRENT TILE RGB: " + rgb)
 
-                                currentTile.colorObj.change("r", rgb.r);
-                                currentTile.colorObj.change("g", rgb.g);
-                                currentTile.colorObj.change("b", rgb.b);
+                                currentTile.colorInfo.change("r", rgb.r);
+                                currentTile.colorInfo.change("g", rgb.g);
+                                currentTile.colorInfo.change("b", rgb.b);
                             }
                             element.style.background = "RGB(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")";
                             element.style.outline = currentTile.outline();
@@ -296,7 +372,7 @@
 
                             //console.log("adding element id : " + currentTile.id());
 
-                            //console.log("~!~! Current tile: " + currentTile.colorObj.r())
+                            //console.log("~!~! Current tile: " + currentTile.colorInfo.r())
                             lookup.tileInfo.push(currentTile);
                             //console.log("~! Success adding map tile (x:" + x + "//y:" + y + ")")
                         }
@@ -318,6 +394,7 @@
         function initMenu()
         {
             lookup.add("menu", {});
+
             lookup.menu.add("id", "_MENU_DOM_");
             lookup.menu.add("width", 150);
             lookup.menu.add("height", function()
@@ -325,6 +402,30 @@
                 return lookup.screen.height() - lookup.topBar.height();
             });
             lookup.menu.add("color", lookup.color.hotPink());
+
+            lookup.menu.add("controlsPerPage", 25);
+
+            lookup.menu.add("control", {});
+
+            lookup.menu.control.add("slider", {});
+            lookup.menu.control.slider.add("name", "slider");
+            lookup.menu.control.slider.add("margin", 10);
+            lookup.menu.control.slider.add("template", {});
+            lookup.menu.control.slider.template.add("info", {});
+            lookup.menu.control.slider.template.info.add("class", "_SLIDER_CONTROL_");
+            lookup.menu.control.slider.template.info.add("idPrefix", "_SLIDER_CONTROL_");
+            lookup.menu.control.slider.template.info.add("idSuffix", "_");
+            lookup.menu.control.slider.template.info.add("size", lookup.menu.width() - lookup.menu.control.slider.margin());
+            lookup.menu.control.slider.template.info.add("value", 0);
+            lookup.menu.control.slider.template.info.add("step", 5);
+            lookup.menu.control.slider.template.info.add("min", 0);
+            lookup.menu.control.slider.template.info.add("max", 255);
+
+            var sliderDiv = document.createElement("div");
+            sliderDiv.style.width = lookup.menu.control.slider.template.info.size() - lookup.menu.control.slider.margin();
+            sliderDiv.style.height = lookup.menu.height() / lookup.menu.controlsPerPage();
+
+            lookup.menu.control.add("domElementTemplate", sliderDiv);
 
             var element = document.createElement("div");
             element.id = lookup.menu.id();
@@ -367,55 +468,124 @@
 
             lookup.menu.add("idDump", []);
 
-            lookup.menu.add("populate", function(selectedTile)
+            lookup.menu.add("populate", function(selectedTile) // selectedTile is a lookup.map.tile
             {
                 lookup.menu.clear();
+                /*lookup.menu.inhabitants.push(
+                {
+                    id:"ID",
+                    control:lookup.menu.control.copy("text"),
+                    readOnly:true,
+                    value:selectedTile.domElement().id,
+                    onChangeFunc:function(value)
+                    {
+                        //selectedTile.setID(value);
+                    }
+                });*/
+                console.log("~!~!~!~! Selected tile: " + selectedTile.)
                 lookup.menu.inhabitants.push(
                 {
-                    term:"ID",
-                    readonly:true,
-                    value:selectedTile.domElement().id
-                });
-                lookup.menu.inhabitants.push(
-                {
-                    term:"R",
-                    readonly:false,
-                    value:selectedTile.colorObj.r()
-                });
-                lookup.menu.inhabitants.push(
-                {
-                    term:"G",
-                    readonly:false,
-                    value:selectedTile.colorObj.g()
-                });
-                lookup.menu.inhabitants.push(
-                {
-                    term:"B",
-                    readonly:false,
-                    value:selectedTile.colorObj.b()
-                });
+                    id:"R",
+                    control:lookup.menu.control.copy("slider"),
+                    readOnly:false,
+                    value:selectedTile.colorInfo.r(),
+                    step:lookup.menu.control.slider.template.info.step(),
+                    min:lookup.menu.control.slider.template.info.min(),
+                    max:lookup.menu.control.slider.template.info.max(),
+                    onChangeFunc:function(value)
+                    {
+                        selectedTile.setR(value);
+                    },
+                    onSlideEndFunc:function(value)
+                    {
 
-                for(var i = 0; i < lookup.menu.inhabitants.length; i++)
+                    }
+                });/*
+                lookup.menu.inhabitants.push(
                 {
+                    id:"G",
+                    control:lookup.menu.control.copy("slider"),
+                    readOnly:false,
+                    value:selectedTile.colorInfo.g(),
+                    onChangeFunc:function(value)
+                    {
+                        selectedTile.setG(value);
+                    },
+                    onSlideEndFunc:function(value)
+                    {
+
+                    }
+                });
+                lookup.menu.inhabitants.push(
+                {
+                    id:"B",
+                    control:lookup.menu.control.copy("slider"),
+                    readOnly:false,
+                    value:selectedTile.colorInfo.b(),
+                    onChangeFunc:function(value)
+                    {
+                        selectedTile.setB(value);
+                    },
+                    onSlideEndFunc:function(value)
+                    {
+
+                    }
+                });*/
+
+                var inhabitants = lookup.menu.inhabitants;
+                var info = {};
+                for(var i = 0; i < inhabitants.length; i++)
+                {
+
+                    var element = lookup.menu.control.domElementTemplate.clone();
+                    console.log("~!~!~!~! element type: " + element.constructor)
+
+                    lookup.menu.domElement().appendChild(element);
+
+                    switch(inhabitants[i].control.name())
+                    {
+                        case "slider":
+                            info = inhabitants[i].control.template.copy("info");
+
+                            var id = info.idPrefix() + inhabitants[i].id + info.idSuffix();
+                            var className = info.class();
+                            var size = info.size();
+                            var value = inhabitants[i].value;
+                            var step = inhabitants[i].step;
+                            var min = inhabitants[i].min;
+                            var max = inhabitants[i].max;
+                            var onChangeFunc = inhabitants[i].onChangeFunc
+
+                            element.id = id;
+                            element.className = className;
+
+                            var options =
+                            {
+                                parent:id,
+                                size:size,
+                                value:value,
+                                step:step,
+                                min:min,
+                                max:max
+                            }
+                            console.log("~!~!~! options:" + options.parent)
+
+                            var slider = new dhtmlXSlider(options);
+                            slider.attachEvent("onChange", onChangeFunc);
+                            break;
+                    }
+
+/*
                     var element = document.createElement("input");
                     element.type = "text";
                     element.className = lookup.menu.inhabitant.class();
                     element.id = lookup.menu.inhabitant.idPrefix() + lookup.menu.inhabitants[i].term + lookup.menu.inhabitant.idSuffix();
                     element.placeholder = lookup.menu.inhabitants[i].term;
                     element.value = lookup.menu.inhabitants[i].value;
-
-                    if(lookup.menu.inhabitants[i].readonly)
-                    {
-                        element.readonly = true;
-                    }
-                    else
-                    {
-                        element.readonly = false;
-                    }
-
-                    lookup.menu.domElement().appendChild(element);
+*/
 
                     lookup.menu.idDump.push(element.id);
+
                 }
             });
         }
@@ -624,6 +794,10 @@
                         {
                             case HTMLDivElement:
                                 self[term] = function(){return value};
+                                self[term].clone = function()
+                                {
+                                    return self[term]().cloneNode(true);
+                                }
                                 break;
                             case Array:
                                 self[term] = value;
