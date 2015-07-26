@@ -20,7 +20,7 @@ function Config(filepath)
       console.log("@info@ Creating new REF")
       //
 
-      window["_"] = new Ref();
+      window["_"] = new Lookup();
       _.add("debug", true);
     }
 
@@ -472,46 +472,55 @@ function Config(filepath)
     temp.add("rgb", "rgb(" + temp.r.dec.string() + ", " + temp.g.dec.string() + ", " + temp.b.dec.string() + ")");
 
     _.add("screen", {});
-    _.screen.add("width", 0);
-    _.screen.add("height", 0);
+    _.screen.add("width", window.innerWidth);
+    _.screen.add("height", window.innerHeight);
 
     _.add("gui", {});
-    _.gui.add("static");
+    _.gui.add("static", {});
     _.gui.static.add("idPrefix", "_GUI_STATIC")
     _.gui.static.add("header", {});
-    _.gui.static.header.add("width", _.screen.width());
-    _.gui.static.header.add("height", 200);
-    _.gui.static.header.add("color", _.color.yellow.rgb());
-    _.gui.static.header.add("position", "absolute");
-    _.gui.static.header.add("top", 0);
-    _.gui.static.header.add("left", 0);
-    console.log(_.gui.static.header.color())
+    _.gui.static.header.add("idPrefix", "_HEADER");
+    _.gui.static.header.add("css", {});
+    _.gui.static.header.css.add("width", _.screen.width());
+    _.gui.static.header.css.add("height", 200);
+    _.gui.static.header.css.add("backgroundColor", _.color.yellow.rgb());
+    _.gui.static.header.css.add("position", "absolute");
+    _.gui.static.header.css.add("top", 0);
+    _.gui.static.header.css.add("left", 0);
+    console.log(_.gui.static.header.css.backgroundColor())
     _.gui.static.add("control", {});
-    _.gui.static.control.add("width", 200);
-    _.gui.static.control.add("height", _.screen.height() - _.gui.static.header.height());
-    _.gui.static.control.add("color", _.color.purple.rgb());
-    _.gui.static.control.add("position", "absolute");
-    _.gui.static.control.add("bottom", 0);
-    _.gui.static.control.add("left", 0);
-    console.log(_.gui.static.control.color())
+    _.gui.static.control.add("idPrefix", "_CONTROL");
+    _.gui.static.control.add("css", {});
+    _.gui.static.control.css.add("width", 200);
+    _.gui.static.control.css.add("height", _.screen.height() - _.gui.static.header.css.height());
+    _.gui.static.control.css.add("backgroundColor", _.color.purple.rgb());
+    _.gui.static.control.css.add("position", "absolute");
+    _.gui.static.control.css.add("bottom", 0);
+    _.gui.static.control.css.add("left", 0);
+    console.log(_.gui.static.control.css.backgroundColor())
     _.gui.static.add("view", {});
-    _.gui.static.view.add("width", _.screen.width() - _.gui.static.control.width());
-    _.gui.static.view.add("height", _.screen.height() - _.gui.static.header.height());
-    _.gui.static.view.add("color", _.color.orange.rgb());
-    _.gui.static.view.add("position", "absolute");
-    _.gui.static.view.add("bottom", 0);
-    _.gui.static.view.add("right", 0);
-    console.log(_.gui.static.view.color())
+    _.gui.static.view.add("idPrefix", "_VIEW");
+    _.gui.static.view.add("css", {});
+    _.gui.static.view.css.add("width", _.screen.width() - _.gui.static.control.css.width());
+    _.gui.static.view.css.add("height", _.screen.height() - _.gui.static.header.css.height());
+    _.gui.static.view.css.add("backgroundColor", _.color.orange.rgb());
+    _.gui.static.view.css.add("position", "absolute");
+    _.gui.static.view.css.add("bottom", 0);
+    _.gui.static.view.css.add("right", 0);
+    console.log(_.gui.static.view.css.backgroundColor())
 
     _.gui.static.add("count", _.gui.static.length);
 
     _.gui.add("map", {});
+    _.gui.map.add("idPrefix", "_MAP")
     _.gui.map.add("width", 0);
     _.gui.map.add("height", 0);
     _.gui.map.add("tile", {});
-    _.gui.map.tile.add("width", 0);
-    _.gui.map.tile.add("height", 0);
-    _.gui.map.tile.add("color", _.color.white.rgb());
-    console.log(_.gui.map.tile.color())
+    _.gui.map.tile.add("idPrefix", "_TILE");
+    _.gui.map.tile.add("css", {});
+    _.gui.map.tile.css.add("width", 0);
+    _.gui.map.tile.css.add("height", 0);
+    _.gui.map.tile.css.add("backgroundColor", _.color.white.rgb());
+    console.log(_.gui.map.tile.css.backgroundColor())
   }
 }

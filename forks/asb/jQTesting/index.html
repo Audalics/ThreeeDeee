@@ -3,34 +3,24 @@
   <head>
     <meta charset="utf-8">
     <title>index|the</title>
-<<<<<<< HEAD
 
     <script src="js/jquery-2.1.4.min.js"></script>
 
-    <script type="text/javascript" src="js/Gui.js"></script>
-    <script type="text/javascript" src="js/Ref.js"></script>
-    <script type="text/javascript" src="js/Config.js"></script>
-    <script type="text/javascript" src="js/App.js"></script>
-
-=======
     <link rel="stylesheet" type="text/css" href="css/reset.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
->>>>>>> origin/master
+
   </head>
   <body>
-  <script src="js/jquery-2.1.4.min.js"></script>
-    <div id="_wrapper">
-      <div id="_header">
-          Header
-      </div>
-      <div id="_main">
-        <div id="_context">
-            Context
-        </div>
-        <div id="_view">
-            view
-        </div>
-      </div>
+    <script src="js/jquery-2.1.4.min.js"></script>
+
+    <div id="_header">
+
+    </div>
+    <div id="_context">
+
+    </div>
+    <div id="_view">
+
     </div>
 
     <script type="text/javascript">
@@ -41,12 +31,138 @@
 
     function Main()
     {
-<<<<<<< HEAD
-      var cfg = new Config(false);
-      var app = new App(cfg);
-=======
+      var header = $("#_header");
+      var context = $("#_context");
+      var view = $("#_view");
 
->>>>>>> origin/master
+      var viewX = context.width();
+      var viewY = header.height();
+
+      var screenWidth = view.width();
+      var screenHeight = view.height();
+
+      var tileWidth = Math.floor(screenWidth / 50);
+      var tileHeight = Math.floor(screenHeight / 50);
+
+      var mapWidth = Math.floor(screenWidth / tileWidth);
+      var mapHeight = Math.floor(screenHeight / tileHeight);
+
+      var mouseOnView = false;
+
+      var lMouseDown = false;
+      var mMouseDown = false;
+      var rMouseDown = false;
+      var mouseMoved = false; // only matters if mouseDown
+      var mouseX = null;
+      var mouseY = null;
+      var mouseDownX = 0;
+      var mouseDownY = 0;
+      var selectedX = null;
+      var selectedY = null;
+      var selectedTile = null;
+      var selectedRGB = {r:null,g:null,b:null};
+
+      document.body.addEventListener("mousemove", function(event)
+    {
+      event.stopPropagation();
+
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+
+      if(mouseX >= viewX && mouseY >= viewY)
+        mouseOnView = true;
+      else
+        mouseOnView = false;
+
+      if(lMouseDown || mMouseDown || rMouseDown)
+      {
+        mouseMoved = true;
+      }
+    }, false);
+
+    document.body.addEventListener("contextmenu", function(event)
+  {
+    event.preventDefault();
+    return false;
+  }, false);
+
+
+      // Init control
+      
+
+      // Init map
+      for(var i = 0; i < mapHeight; i++)
+      {
+        for(var j = 0; j < mapWidth; j++)
+        {
+          var element = $("<div class=\"_tile\" id=\"" + j + "-" + i + "\"></div>");
+          element.width(tileWidth).height(tileHeight);
+          element.on("mousedown", function(event)
+        {
+          mouseDownX = event.clientX;
+          mouseDownY = event.clientY;
+
+          switch(event.which)
+          {
+            case 1:
+              lMouseDown = true;
+              // if user drags, start region select
+              break;
+            case 2:
+              mMouseDown = true;
+              break;
+            case 3:
+              rMouseDown = true;
+              break;
+            default:
+              break;
+          }
+        }).on("mouseup", function(event)
+      {
+        switch(event.which)
+        {
+          case 1:
+            lMouseDown = false;
+
+            if(mouseMoved)
+            {
+              // Start selection process
+            }
+            else
+            {
+              // Select single tile
+              var element = $("#" + event.target.id);
+              var id = element.attr("id");
+              var pos = id.split("-");
+
+              selectedTile = element;
+              selectedX = pos[0];
+              selectedY = pos[1];
+
+              var color = selectedTile.css("backgroundColor");
+              var temp = color.split("(");
+              var temp2 = temp[1].split(")");
+              var rgb = temp2[0].split(", ");
+              selectedRGB.r = rgb[0];
+              selectedRGB.g = rgb[1];
+              selectedRGB.b = rgb[2];
+              console.log("color:r:" + selectedRGB.r + "//g:" + selectedRGB.g + "//b:" + selectedRGB.b);
+            }
+            break;
+          case 2:
+            mMouseDown = false;
+            break;
+          case 3:
+            rMouseDown = false;
+            break;
+          default:
+            break;
+        }
+      });
+          view.append(element);
+        }
+        //view.append("<br />");
+      }
     }
     </script>
   </body>
