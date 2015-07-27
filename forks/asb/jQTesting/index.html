@@ -53,6 +53,7 @@
       var mMouseDown = false;
       var rMouseDown = false;
       var mouseMoved = false; // only matters if mouseDown
+      var mouseMoveTimeout = null;
       var mouseX = null;
       var mouseY = null;
       var mouseDownX = 0;
@@ -65,6 +66,10 @@
       document.body.addEventListener("mousemove", function(event)
     {
       event.stopPropagation();
+
+      if(mouseMoveTimeout)
+        clearTimeout(mouseMoveTimeout);
+      mouseMoveTimeout = setTimeout(function(){mouseMoved = false;}, 200);
 
       mouseX = event.clientX;
       mouseY = event.clientY;
@@ -88,7 +93,7 @@
 
 
       // Init control
-      
+
 
       // Init map
       for(var i = 0; i < mapHeight; i++)
